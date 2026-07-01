@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ronaldino Espinoza | Junior Cybersecurity Analyst Portfolio</title>
+    <link rel="stylesheet" href="/css/portfolio-style.css">
+    <link rel="stylesheet" href="/css/portfolio_patch.css">
+</head>
+<body>
+<div class="portfolio-layout">
+    
+    <aside class="sidebar-public">
+        <div class="profile-summary">
+            <img src="/images/avatar-cyber.jpeg" alt="Ronaldino" class="avatar">
+            <h2>Ronaldino Espinoza</h2>
+            <p style="color: #00d4ff; font-weight: 600; font-size: 0.85rem; letter-spacing: 0.5px; font-family: monospace;">Junior Cybersecurity Analyst</p>
+        </div>
+        <nav class="sidebar-menu">
+            <button onclick="cargarModuloPublico('inicio')" style="display: flex; align-items: center; gap: 8px;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="3" width="7" height="7"/>
+                    <rect x="14" y="3" width="7" height="7"/>
+                    <rect x="14" y="14" width="7" height="7"/>
+                    <rect x="3" y="14" width="7" height="7"/>
+                </svg>
+                Inicio
+            </button>
+            <button onclick="cargarModuloPublico('sobre-mi')" style="display: flex; align-items: center; gap: 8px;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="8" r="4"/>
+                    <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+                </svg>
+                Perfil Operativo
+            </button>
+            <button onclick="cargarModuloPublico('laboratorios')" style="display: flex; align-items: center; gap: 8px;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="3"/>
+                    <path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/>
+                    <path d="M15.54 8.46a5 5 0 0 1 0 7.07M8.46 8.46a5 5 0 0 0 0 7.07"/>
+                </svg>
+                Laboratorios SecOps
+            </button>
+            <button onclick="cargarModuloPublico('certificaciones')" style="display: flex; align-items: center; gap: 8px;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                    <polyline points="14 2 14 8 20 8"/>
+                    <line x1="12" y1="13" x2="12" y2="17"/>
+                    <line x1="9" y1="15" x2="15" y2="15"/>
+                </svg>
+                Certificaciones 
+            </button>
+            <button onclick="cargarModuloPublico('herramientas')" style="display: flex; align-items: center; gap: 8px;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+                </svg>
+                Stack de Auditoría
+            </button>
+            <button onclick="cargarModuloPublico('proyectos')" style="display: flex; align-items: center; gap: 8px;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                    <line x1="9" y1="9" x2="15" y2="9"/>
+                    <line x1="9" y1="15" x2="15" y2="15"/>
+                </svg>
+                Infraestructura & Código
+            </button>
+            <button onclick="cargarModuloPublico('roadmap')" style="display: flex; align-items: center; gap: 8px;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="20" x2="18" y2="10"/>
+                    <line x1="12" y1="20" x2="12" y2="4"/>
+                    <line x1="6" y1="20" x2="6" y2="14"/>
+                </svg>
+                Ruta de Especialización
+            </button>
+            <button onclick="cargarModuloPublico('contacto')" style="display: flex; align-items: center; gap: 8px;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+                </svg>
+                Canal de Comunicación
+            </button>
+        </nav>
+    </aside>
+
+    <main class="main-viewport">
+        <div id="main-content"></div>
+    </main>
+
+    <aside class="ia-chat-panel">
+        <div class="chat-header">
+            <h3 style="display: flex; align-items: center; gap: 6px; color: #39ff14;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="3"/>
+                    <path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/>
+                    <path d="M15.54 8.46a5 5 0 0 1 0 7.07M8.46 8.46a5 5 0 0 0 0 7.07"/>
+                </svg>
+                SecOps AI Auditor
+            </h3>
+            <small style="color: #8e8e93;">Valida mis destrezas de seguridad e infraestructura</small>
+        </div>
+        
+        <div id="chat-box" class="chat-box metric-card" style="display: block; overflow-y: auto; max-height: 350px; margin-bottom: 1rem;">
+            <div class="msg system" style="font-size: 0.85rem; line-height: 1.5; border-left: 2px solid #39ff14; padding-left: 8px;">
+                CONEXIÓN INICIADA: Hola. Soy el auditor virtual de Ronaldino. ¿Deseas verificar cómo compensa su falta de experiencia laboral mediante laboratorios en Parrot OS, configuraciones Cloud en AWS o el análisis táctico de logs de redes Cisco?
+            </div>
+        </div>
+        
+        <div class="chat-input-area">
+            <input type="text" id="ia-input" placeholder="¿Cómo asegura infraestructuras internas?..." onkeypress="evaluarEnter(event)">
+            <button id="btn-preguntar-ia" onclick="preguntarIA()" style="display: flex; align-items: center; justify-content: center;">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                </svg>
+            </button>
+        </div>
+    </aside>
+    
+</div>
+<script src="/js/ia-public-chat.js"></script>
+</body>
+</html>

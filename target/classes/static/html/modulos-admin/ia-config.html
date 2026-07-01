@@ -1,0 +1,73 @@
+<div class="ai-config-wrapper" style="display: flex; flex-direction: column; gap: 24px; padding: 10px;">
+    
+    <section class="node-maint-section" style="width: 100%;">
+        <div class="node-maint-header" style="margin-bottom: 15px;">
+            <h2 style="display: flex; align-items: center; gap: 8px; margin: 0; font-size: 1.3rem;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="3"/>
+                    <path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/>
+                </svg>
+                Registrar Configuración IA
+            </h2>
+        </div>
+
+        <form id="form-ia-config" class="crypto-form-matrix" style="display: flex; flex-direction: column; gap: 14px;">
+            <input type="hidden" id="ia-id" value="">
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                <div class="crypto-input-block">
+                    <label for="ia-select-provider">Proveedor Activo:</label>
+                    <select id="ia-select-provider" style="width: 100%;">
+                        <option value="gemini">Google Gemini (Cloud API)</option>
+                        <option value="ollama">Ollama (Contenedor Local)</option>
+                    </select>
+                </div>
+                
+                <div class="crypto-input-block">
+                    <label for="ia-model-name">Nombre del Modelo:</label>
+                    <input type="text" id="ia-model-name" placeholder="Ej: gemini-1.5-flash o llama3" required style="width: 100%;">
+                </div>
+            </div>
+            
+            <div class="crypto-input-block" id="wrapper-gemini-key">
+                <label for="ia-gemini-key">Gemini / Groq API Key:</label>
+                <input type="password" id="ia-gemini-key" placeholder="AIzaSy... o gsk_..." style="width: 100%;">
+            </div>
+            
+            <div class="crypto-input-block" id="wrapper-ollama-url" style="display: none;">
+                <label for="ia-ollama-url">Endpoint Local de Ollama:</label>
+                <input type="text" id="ia-ollama-url" placeholder="http://localhost:11434" value="http://localhost:11434" style="width: 100%;">
+            </div>
+            
+            <div class="crypto-input-block">
+                <label for="ia-system-prompt">Prompt del Sistema (Instrucciones):</label>
+                <textarea id="ia-system-prompt" rows="5" placeholder="Eres un motor de auditoría automatizado..." required style="width: 100%;"></textarea>
+            </div>
+
+            <div class="crypto-action-block" style="margin-top: 5px; text-align: right;">
+                <button type="submit" id="btn-guardar-ia-config" class="crypto-btn-commit" style="padding: 10px 24px;">
+                    GUARDAR CONFIGURACIÓN
+                </button>
+            </div>
+        </form>
+    </section>
+
+    <section class="node-maint-section" style="width: 100%;">
+        <div class="node-maint-header" style="margin-bottom: 15px;">
+            <h3 style="margin: 0; font-size: 1.1rem; color: #fff;">Motores Registrados en Base de Datos</h3>
+        </div>
+        <div style="overflow-x: auto;">
+            <table class="crypto-table" style="width: 100%; border-collapse: collapse; text-align: left;">
+                <thead>
+                    <tr style="border-bottom: 2px solid #222; color: #888; font-size: 0.85rem;">
+                        <th style="padding: 12px 8px;">PROVEEDOR</th>
+                        <th style="padding: 12px 8px;">MODELO</th>
+                        <th style="padding: 12px 8px; text-align: center; width: 180px;">ACCIONES</th>
+                    </tr>
+                </thead>
+                <tbody id="ia-table-body">
+                    </tbody>
+            </table>
+        </div>
+    </section>
+</div>
