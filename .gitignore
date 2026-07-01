@@ -11,3 +11,8 @@ bd/
 Thumbs.db
 .idea/
 .vscode/
+
+# Compilados de Java y Maven
+target/
+*.class
+.mtj.tmp/
