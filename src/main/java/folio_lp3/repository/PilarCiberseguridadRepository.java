@@ -10,17 +10,21 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Repository para PilarCiberseguridad
+ * Repository optimizado para PilarCiberseguridad.
+ * Aplica cargas ansiosas controladas para evitar LazyInitializationExceptions en mapeos de DTOs.
  */
 @Repository
 public interface PilarCiberseguridadRepository extends JpaRepository<PilarCiberseguridad, Long> {
     
-    Optional<PilarCiberseguridad> findByNombrePilar(String nombrePilar);
+    @Query("SELECT p FROM PilarCiberseguridad p LEFT JOIN FETCH p.entorno WHERE p.nombrePilar = :nombrePilar")
+    Optional<PilarCiberseguridad> findByNombrePilar(@Param("nombrePilar") String nombrePilar);
     
+    @Query("SELECT p FROM PilarCiberseguridad p LEFT JOIN FETCH p.entorno WHERE p.activo = true")
     List<PilarCiberseguridad> findByActivoTrue();
     
-    List<PilarCiberseguridad> findByEntornoId(Long entornoId);
+    @Query("SELECT p FROM PilarCiberseguridad p JOIN FETCH p.entorno WHERE p.entorno.id = :entornoId")
+    List<PilarCiberseguridad> findByEntornoId(@Param("entornoId") Long entornoId);
     
-    @Query("SELECT p FROM PilarCiberseguridad p WHERE p.entorno.id = :entornoId AND p.activo = true")
+    @Query("SELECT p FROM PilarCiberseguridad p JOIN FETCH p.entorno WHERE p.entorno.id = :entornoId AND p.activo = true")
     List<PilarCiberseguridad> findActiveByEntorno(@Param("entornoId") Long entornoId);
 }

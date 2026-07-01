@@ -13,7 +13,7 @@ import java.util.List;
  * Controlador REST para Entorno
  */
 @RestController
-@RequestMapping("/entornos")
+@RequestMapping("/api/v1/entornos")
 @RequiredArgsConstructor
 @CrossOrigin(origins = "*")
 public class EntornoController {

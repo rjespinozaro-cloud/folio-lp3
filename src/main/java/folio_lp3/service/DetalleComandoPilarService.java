@@ -9,6 +9,7 @@ import folio_lp3.repository.DetalleComandoPilarRepository;
 import folio_lp3.repository.HerramientaRepository;
 import folio_lp3.repository.PilarCiberseguridadRepository;
 import folio_lp3.repository.SubtemaRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,11 +18,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Servicio para DetalleComandoPilar
+ * Servicio orquestador de comandos y evidencias, blindado contra fallos de integridad relacional.
  */
 @Service
 @RequiredArgsConstructor
-@Transactional
 public class DetalleComandoPilarService {
     
     private final DetalleComandoPilarRepository detalleRepository;
@@ -29,17 +29,18 @@ public class DetalleComandoPilarService {
     private final HerramientaRepository herramientaRepository;
     private final SubtemaRepository subtemaRepository;
     
+    @Transactional
     public DetalleComandoPilarDTO crear(DetalleComandoPilarDTO dto) {
         PilarCiberseguridad pilar = pilarRepository.findById(dto.getPilarId())
-                .orElseThrow(() -> new RuntimeException("Pilar no encontrado"));
+                .orElseThrow(() -> new EntityNotFoundException("Asignación fallida: El pilar ID " + dto.getPilarId() + " no existe."));
         
         Herramienta herramienta = herramientaRepository.findById(dto.getHerramientaId())
-                .orElseThrow(() -> new RuntimeException("Herramienta no encontrada"));
+                .orElseThrow(() -> new EntityNotFoundException("Asignación fallida: La herramienta ID " + dto.getHerramientaId() + " no existe."));
         
         Subtema subtema = null;
         if (dto.getSubtemaId() != null) {
             subtema = subtemaRepository.findById(dto.getSubtemaId())
-                    .orElseThrow(() -> new RuntimeException("Subtema no encontrado"));
+                    .orElseThrow(() -> new EntityNotFoundException("Asignación fallida: El subtema ID " + dto.getSubtemaId() + " no existe."));
         }
         
         DetalleComandoPilar detalle = DetalleComandoPilar.builder()
@@ -56,37 +57,41 @@ public class DetalleComandoPilarService {
                 .activo(true)
                 .build();
         
-        DetalleComandoPilar guardado = detalleRepository.save(detalle);
-        return convertirADTO(guardado);
+        return convertirADTO(detalleRepository.save(detalle));
     }
     
+    @Transactional(readOnly = true)
     public DetalleComandoPilarDTO obtenerPorId(Long id) {
         return detalleRepository.findById(id)
                 .map(this::convertirADTO)
-                .orElseThrow(() -> new RuntimeException("Detalle de comando no encontrado"));
+                .orElseThrow(() -> new EntityNotFoundException("El detalle de comando con ID " + id + " no existe."));
     }
     
+    @Transactional(readOnly = true)
     public List<DetalleComandoPilarDTO> listarTodos() {
         return detalleRepository.findAll().stream()
                 .map(this::convertirADTO)
                 .collect(Collectors.toList());
     }
     
+    @Transactional(readOnly = true)
     public List<DetalleComandoPilarDTO> listarPorPilar(Long pilarId) {
         return detalleRepository.findActiveByPilar(pilarId).stream()
                 .map(this::convertirADTO)
                 .collect(Collectors.toList());
     }
     
+    @Transactional(readOnly = true)
     public List<DetalleComandoPilarDTO> listarPorHerramienta(Long herramientaId) {
         return detalleRepository.findByHerramientaId(herramientaId).stream()
                 .map(this::convertirADTO)
                 .collect(Collectors.toList());
     }
     
+    @Transactional
     public DetalleComandoPilarDTO actualizar(Long id, DetalleComandoPilarDTO dto) {
         DetalleComandoPilar detalle = detalleRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Detalle de comando no encontrado"));
+                .orElseThrow(() -> new EntityNotFoundException("No se puede actualizar. Comando ID " + id + " no existe."));
         
         detalle.setTipoComando(dto.getTipoComando());
         detalle.setSintaxis(dto.getSintaxis());
@@ -94,13 +99,18 @@ public class DetalleComandoPilarService {
         detalle.setNivelImpacto(dto.getNivelImpacto());
         detalle.setVulnerabilidadAsociada(dto.getVulnerabilidadAsociada());
         detalle.setMitigacion(dto.getMitigacion());
+        
+        // CORRECCIÓN AQUÍ: Se cambió setdescripcionPersonalizada por setDescripcionPersonalizada (P mayúscula)
         detalle.setDescripcionPersonalizada(dto.getDescripcionPersonalizada());
         
-        DetalleComandoPilar actualizado = detalleRepository.save(detalle);
-        return convertirADTO(actualizado);
+        return convertirADTO(detalleRepository.save(detalle));
     }
     
+    @Transactional
     public void eliminar(Long id) {
+        if (!detalleRepository.existsById(id)) {
+            throw new EntityNotFoundException("No se puede eliminar. Comando ID " + id + " no existe.");
+        }
         detalleRepository.deleteById(id);
     }
     

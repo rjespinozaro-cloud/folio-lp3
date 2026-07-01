@@ -1,0 +1,414 @@
+/* ============================================================
+   PORTFOLIO-PATCH.CSS :: CLASES Y VARIABLES QUE EL JS NECESITA
+   Cargar DESPUES de portfolio.css en el <head>, en este orden:
+   <link rel="stylesheet" href="portfolio.css">
+   <link rel="stylesheet" href="portfolio-patch.css">
+   ============================================================ */
+/* ------------------------------------------------------------
+   [1] ALIAS DE VARIABLES — el JS usa estos nombres via var(--x, fallback).
+   Al declararlos aqui, el fallback neon viejo deja de usarse y
+   automaticamente heredan tu paleta verde/cian sin tocar el JS.
+   ------------------------------------------------------------ */
+:root {
+    --lime: var(--accent-safe);
+    --cyan: var(--accent-tech);
+    --text-bright: var(--text-primary);
+    --font-ui: var(--font-stack);
+}
+/* ------------------------------------------------------------
+   [2] NAVEGACION ACTIVA — el JS agrega "active-module", no "active".
+   Sin esto el boton activo del sidebar nunca se resalta.
+   ------------------------------------------------------------ */
+.sidebar-menu button.active-module {
+    background: linear-gradient(90deg, rgba(45, 212, 191, 0.16) 0%, rgba(45, 212, 191, 0.03) 100%) !important;
+    color: var(--text-primary) !important;
+    border: 1px solid rgba(34, 211, 199, 0.4) !important;
+    font-weight: 600;
+}
+.sidebar-menu button.active-module::after {
+    content: "\25C0";
+    font-size: 0.6rem;
+    color: var(--accent-tech);
+    margin-left: auto;
+    animation: pulse 1.5s infinite;
+}
+/* ------------------------------------------------------------
+   [3] ESTADO DE CARGA / FALLBACK DE LAS GRILLAS DINAMICAS
+   ------------------------------------------------------------ */
+.siem-table-fallback {
+    grid-column: 1 / -1;
+    text-align: center;
+    color: var(--text-secondary);
+    font-family: var(--font-mono);
+    padding: 4rem 1rem;
+    font-size: 0.95rem;
+    background: rgba(45, 212, 191, 0.03) !important;
+    border: 1px dashed var(--border-color) !important;
+    border-radius: var(--card-radius) !important;
+}
+/* ------------------------------------------------------------
+   [4] TARJETAS DINAMICAS (Laboratorios, Certificaciones,
+   Herramientas, Evidencias). El JS les pone estilos inline
+   hardcodeados (fondo #1a1a1a, borde #333, radio 6px) que no
+   usan tu paleta. Estos !important los neutralizan sin tocar
+   el JS, porque el inline que genera el JS no trae !important.
+   ------------------------------------------------------------ */
+.stat-box-admin {
+    background: linear-gradient(135deg, var(--bg-surface) 0%, rgba(6, 10, 9, 0.8) 100%) !important;
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--border-color) !important;
+    border-radius: var(--card-radius) !important;
+    transition: var(--transition-standard);
+}
+.stat-box-admin:hover {
+    border-color: var(--accent-tech) !important;
+    box-shadow: 0 10px 26px rgba(45, 212, 191, 0.1);
+    transform: translateY(-4px);
+}
+.stat-box-admin.font-green {
+    color: var(--text-primary) !important;
+}
+.stat-box-admin * {
+    font-family: var(--font-stack);
+}
+.stat-box-admin code {
+    font-family: var(--font-mono) !important;
+}
+/* ------------------------------------------------------------
+   [5] LIMITACION CONOCIDA — no cubierta por este parche.
+   Los divs internos de preview (imagen, hash de integridad)
+   no tienen clase, solo "style" inline con fondo #111 y
+   borde #333. CSS no puede engancharlos sin un selector,
+   asi que seguiran en gris neutro aunque cambies la paleta.
+   Solucion real: agregar una clase a esos divs en el JS,
+   por ejemplo class="stat-box-admin__preview" y class=
+   "stat-box-admin__hash", y yo te paso el estilo para esas.
+   ------------------------------------------------------------ */
+   /* ============================================================
+   PORTFOLIO-PATCH.CSS :: CLASES Y VARIABLES QUE EL JS NECESITA
+   Cargar DESPUES de portfolio.css en el <head>, en este orden:
+   <link rel="stylesheet" href="portfolio.css">
+   <link rel="stylesheet" href="portfolio-patch.css">
+   ============================================================ */
+/* ------------------------------------------------------------
+   [1] ALIAS DE VARIABLES — el JS usa estos nombres via var(--x, fallback).
+   Al declararlos aqui, el fallback neon viejo deja de usarse y
+   automaticamente heredan tu paleta verde/cian sin tocar el JS.
+   ------------------------------------------------------------ */
+:root {
+    --lime: var(--accent-safe);
+    --cyan: var(--accent-tech);
+    --text-bright: var(--text-primary);
+    --font-ui: var(--font-stack);
+}
+/* ------------------------------------------------------------
+   [2] NAVEGACION ACTIVA — el JS agrega "active-module", no "active".
+   Sin esto el boton activo del sidebar nunca se resalta.
+   ------------------------------------------------------------ */
+.sidebar-menu button.active-module {
+    background: linear-gradient(90deg, rgba(45, 212, 191, 0.16) 0%, rgba(45, 212, 191, 0.03) 100%) !important;
+    color: var(--text-primary) !important;
+    border: 1px solid rgba(34, 211, 199, 0.4) !important;
+    font-weight: 600;
+}
+.sidebar-menu button.active-module::after {
+    content: "\25C0";
+    font-size: 0.6rem;
+    color: var(--accent-tech);
+    margin-left: auto;
+    animation: pulse 1.5s infinite;
+}
+/* ------------------------------------------------------------
+   [3] ESTADO DE CARGA / FALLBACK DE LAS GRILLAS DINAMICAS
+   ------------------------------------------------------------ */
+.siem-table-fallback {
+    grid-column: 1 / -1;
+    text-align: center;
+    color: var(--text-secondary);
+    font-family: var(--font-mono);
+    padding: 4rem 1rem;
+    font-size: 0.95rem;
+    background: rgba(45, 212, 191, 0.03) !important;
+    border: 1px dashed var(--border-color) !important;
+    border-radius: var(--card-radius) !important;
+}
+/* ------------------------------------------------------------
+   [4] TARJETAS DINAMICAS (Laboratorios, Certificaciones,
+   Herramientas, Evidencias). El JS les pone estilos inline
+   hardcodeados (fondo #1a1a1a, borde #333, radio 6px) que no
+   usan tu paleta. Estos !important los neutralizan sin tocar
+   el JS, porque el inline que genera el JS no trae !important.
+   ------------------------------------------------------------ */
+.stat-box-admin {
+    background: linear-gradient(135deg, var(--bg-surface) 0%, rgba(6, 10, 9, 0.8) 100%) !important;
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--border-color) !important;
+    border-radius: var(--card-radius) !important;
+    transition: var(--transition-standard);
+}
+.stat-box-admin:hover {
+    border-color: var(--accent-tech) !important;
+    box-shadow: 0 10px 26px rgba(45, 212, 191, 0.1);
+    transform: translateY(-4px);
+}
+.stat-box-admin.font-green {
+    color: var(--text-primary) !important;
+}
+.stat-box-admin * {
+    font-family: var(--font-stack);
+}
+.stat-box-admin code {
+    font-family: var(--font-mono) !important;
+}
+/* ------------------------------------------------------------
+   [5] LIMITACION CONOCIDA — no cubierta por este parche.
+   Los divs internos de preview (imagen, hash de integridad)
+   no tienen clase, solo "style" inline con fondo #111 y
+   borde #333. CSS no puede engancharlos sin un selector,
+   asi que seguiran en gris neutro aunque cambies la paleta.
+   Solucion real: agregar una clase a esos divs en el JS,
+   por ejemplo class="stat-box-admin__preview" y class=
+   "stat-box-admin__hash", y yo te paso el estilo para esas.
+   ------------------------------------------------------------ */
+/* ------------------------------------------------------------
+   [6] OVERRIDE DE COLORES INLINE HARDCODEADOS EN EL HTML
+   Estos selectores ya existen en tu HTML, solo ganan
+   especificidad con !important sobre el style="" inline.
+   ------------------------------------------------------------ */
+.profile-summary p {
+    color: var(--accent-tech) !important;
+}
+.chat-header h3 {
+    color: var(--text-primary) !important;
+}
+.chat-header small {
+    color: var(--text-secondary) !important;
+}
+.msg.system {
+    border-left: 2px solid var(--accent-tech) !important;
+}
+/* ------------------------------------------------------------
+   [7] FIX DEL CONFLICTO chat-box + metric-card
+   El HTML pone ambas clases en el mismo div. Este selector
+   compuesto solo aplica cuando coinciden las dos juntas,
+   asi que no afecta a las metric-card normales del resto
+   del sitio.
+   ------------------------------------------------------------ */
+.chat-box.metric-card {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 1.1rem !important;
+    padding: 1.25rem !important;
+}
+.chat-box.metric-card:hover {
+    transform: none !important;
+    box-shadow: none !important;
+    border-color: var(--border-color) !important;
+}
+/* ==========================================
+   Plataforma Modular SOC Identity Hub
+   ========================================== */
+.soc-identity-hub {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 50px;
+    background: linear-gradient(180deg, #0d1527 0%, #070a13 100%);
+    border: 1px solid rgba(59, 130, 246, 0.15);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    position: relative;
+}
+
+/* Control estricto de la plataforma del avatar */
+.core-avatar-platform {
+    position: relative;
+    width: 140px;
+    height: 140px;
+    flex-shrink: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.avatar-frame-circular {
+    width: 130px;
+    height: 130px;
+    border-radius: 50%;
+    border: 3px solid #3b82f6;
+    overflow: hidden;
+    z-index: 5;
+    background: #070a13;
+    box-shadow: 0 0 15px rgba(59, 130, 246, 0.4);
+}
+
+/* Ajuste absoluto del render de la foto */
+.avatar-file-render {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top; /* Centra el encuadre en el rostro */
+}
+
+/* Anillos de Radar Operativos */
+.radar-ring {
+    position: absolute;
+    border: 1px solid rgba(57, 255, 20, 0.25);
+    border-radius: 50%;
+    z-index: 1;
+}
+.pulse-1 { width: 145px; height: 145px; animation: socPulse 2.5s infinite ease-in-out; }
+.pulse-2 { width: 160px; height: 160px; border-color: rgba(59, 130, 246, 0.1); }
+
+.status-badge-online {
+    position: absolute;
+    bottom: -6px;
+    background: #070a13;
+    border: 1px solid #39ff14;
+    color: #39ff14;
+    font-family: monospace;
+    font-size: 0.65rem;
+    padding: 2px 8px;
+    border-radius: 10px;
+    z-index: 6;
+    box-shadow: 0 2px 6px rgba(57, 255, 20, 0.15);
+}
+
+/* Escuadrón de Robots SVG laterales */
+.bot-matrix {
+    display: flex;
+    gap: 16px;
+}
+.hud-bot {
+    width: 36px;
+    height: 36px;
+    opacity: 0.35;
+    transition: opacity 0.25s, transform 0.25s;
+}
+.hud-bot:hover {
+    opacity: 0.9;
+    transform: scale(1.15);
+}
+
+@keyframes socPulse {
+    0%, 100% { transform: scale(0.97); opacity: 0.3; }
+    50% { transform: scale(1.03); opacity: 0.7; }
+}
+
+/* ==========================================
+   Responsive Adaptativo
+   ========================================== */
+@media (max-width: 768px) {
+    .soc-identity-hub {
+        flex-direction: column;
+        gap: 25px;
+        padding: 1.5rem;
+    }
+    .bot-matrix {
+        justify-content: center;
+        gap: 20px;
+    }
+    .left-wing { order: 2; }
+    .right-wing { order: 3; }
+    .core-avatar-platform { order: 1; }
+}
+/* =======================================================
+   REFORZAMIENTO RESPONSIVO: BOTS Y CONTAINERS SECUNDARIOS
+   ======================================================= */
+
+/* Forzado de proporciones nativas para los SVG en pantallas de escritorio */
+.bot-matrix {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: nowrap; /* Evita que los robots se desalineen verticalmente */
+}
+
+/* =======================================================
+   Media Query para Tablets y Laptops Pequeñas (<= 992px)
+   ======================================================= */
+@media (max-width: 992px) {
+    .soc-identity-hub {
+        gap: 30px; /* Reduce el espaciado para que no se apriete */
+        padding: 1.2rem;
+    }
+    
+    .hud-bot {
+        width: 32px; /* Reducción de escala preventiva */
+        height: 32px;
+    }
+}
+
+/* =======================================================
+   Media Query para Celulares / Vista Mobile (<= 768px)
+   ======================================================= */
+@media (max-width: 768px) {
+    .soc-identity-hub {
+        flex-direction: column; /* Cambio de flujo lateral a vertical */
+        gap: 20px;
+        padding: 1.5rem 1rem;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    /* Ordenamiento de ejecución en consola móvil */
+    .core-avatar-platform { 
+        order: 1; /* La foto se queda arriba al centro */
+    }
+    .left-wing { 
+        order: 2; /* Los primeros 3 bots pasan abajo de la foto */
+    }
+    .right-wing { 
+        order: 3; /* Los últimos 3 bots se acomodan en la base */
+    }
+
+    /* Ajuste de los contenedores de los robots en móviles */
+    .bot-matrix {
+        width: 100%;
+        max-width: 280px; /* Limita la expansión en móviles horizontales */
+        justify-content: space-evenly; /* Distribución simétrica exacta */
+        gap: 10px;
+        margin: 0 auto;
+    }
+
+    /* Redimensionamiento de los bots para pantallas compactas */
+    .hud-bot {
+        width: 38px; /* Tamaño táctil cómodo para interacción en celulares */
+        height: 38px;
+        opacity: 0.5; /* Mayor visibilidad por defecto en móvil */
+    }
+}
+
+/* =======================================================
+   Media Query para Pantallas Micro / Celulares Chicos (<= 360px)
+   ======================================================= */
+@media (max-width: 360px) {
+    .soc-identity-hub {
+        padding: 1rem 0.5rem;
+    }
+
+    .core-avatar-platform {
+        width: 120px;
+        height: 120px;
+    }
+
+    .avatar-frame-circular {
+        width: 110px;
+        height: 110px;
+    }
+
+    .bot-matrix {
+        max-width: 220px;
+        gap: 8px;
+    }
+
+    .hud-bot {
+        width: 30px; /* Escala mínima de seguridad para evitar desbordes */
+        height: 30px;
+    }
+}

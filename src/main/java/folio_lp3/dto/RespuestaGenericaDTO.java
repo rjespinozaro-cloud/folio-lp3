@@ -5,8 +5,11 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 /**
- * DTO para crear respuesta genérica de API
+ * DTO Estándar para las respuestas de la API.
+ * Encapsula la data real (T) brindando metadata consistente al Frontend.
  */
 @Data
 @NoArgsConstructor
@@ -16,22 +19,23 @@ public class RespuestaGenericaDTO<T> {
     private boolean exitoso;
     private String mensaje;
     private T datos;
-    private String timestamp;
+    private LocalDateTime timestamp;
     
     public static <T> RespuestaGenericaDTO<T> exitoso(String mensaje, T datos) {
         return RespuestaGenericaDTO.<T>builder()
                 .exitoso(true)
                 .mensaje(mensaje)
                 .datos(datos)
-                .timestamp(java.time.LocalDateTime.now().toString())
+                .timestamp(LocalDateTime.now())
                 .build();
     }
     
-    public static <T> RespuestaGenericaDTO<T> error(String mensaje) {
+    public static <T> RespuestaGenericaDTO<T> error(String mensaje, T datos) {
         return RespuestaGenericaDTO.<T>builder()
                 .exitoso(false)
                 .mensaje(mensaje)
-                .timestamp(java.time.LocalDateTime.now().toString())
+                .datos(datos)
+                .timestamp(LocalDateTime.now())
                 .build();
     }
 }

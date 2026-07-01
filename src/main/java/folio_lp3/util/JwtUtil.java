@@ -26,9 +26,11 @@ public class JwtUtil {
     /**
      * Obtener la clave secreta
      */
-    private SecretKey obtenerClaveSecreta() {
-        return Keys.hmacShaKeyFor(jwtSecret.getBytes());
-    }
+   private SecretKey obtenerClaveSecreta() {
+    return Keys.hmacShaKeyFor(
+            jwtSecret.getBytes(java.nio.charset.StandardCharsets.UTF_8)
+    );
+}
     
     /**
      * Generar token JWT

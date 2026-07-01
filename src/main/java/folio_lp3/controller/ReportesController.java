@@ -11,7 +11,7 @@ import java.util.Map;
  * Controller REST para Reportes y Estadísticas
  */
 @RestController
-@RequestMapping("/reportes")
+@RequestMapping("/api/v1/reportes")
 @RequiredArgsConstructor
 @CrossOrigin(origins = "*")
 public class ReportesController {

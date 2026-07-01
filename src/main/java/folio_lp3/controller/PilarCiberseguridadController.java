@@ -10,44 +10,25 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * Controller REST para PilarCiberseguridad
+ * Controller REST para la gestión de Especialidades/Pilares de Ciberseguridad.
+ * Aplica CORS restrictivo y prepara los contextos para accesos diferenciados.
  */
 @RestController
-@RequestMapping("/pilares")
+@RequestMapping("/api/v1/pilares")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "${app.security.cors.allowed-origins:http://localhost:3000}")
 public class PilarCiberseguridadController {
     
     private final PilarCiberseguridadService pilarService;
     
+    // ===================================================================
+    // PANEL 2 - ADMINISTRADOR (EXCLUSIVO CON AUTENTICACIÓN)
+    // ===================================================================
+
     @PostMapping
     public ResponseEntity<PilarCiberseguridadDTO> crearPilar(@RequestBody PilarCiberseguridadDTO pilarDTO) {
         PilarCiberseguridadDTO resultado = pilarService.crearPilar(pilarDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(resultado);
-    }
-    
-    @GetMapping("/{id}")
-    public ResponseEntity<PilarCiberseguridadDTO> obtenerPorId(@PathVariable Long id) {
-        PilarCiberseguridadDTO pilar = pilarService.obtenerPorId(id);
-        return ResponseEntity.ok(pilar);
-    }
-    
-    @GetMapping
-    public ResponseEntity<List<PilarCiberseguridadDTO>> listarTodos() {
-        List<PilarCiberseguridadDTO> pilares = pilarService.listarTodos();
-        return ResponseEntity.ok(pilares);
-    }
-    
-    @GetMapping("/activos")
-    public ResponseEntity<List<PilarCiberseguridadDTO>> listarActivos() {
-        List<PilarCiberseguridadDTO> pilares = pilarService.listarActivos();
-        return ResponseEntity.ok(pilares);
-    }
-    
-    @GetMapping("/entorno/{entornoId}")
-    public ResponseEntity<List<PilarCiberseguridadDTO>> listarPorEntorno(@PathVariable Long entornoId) {
-        List<PilarCiberseguridadDTO> pilares = pilarService.listarPorEntorno(entornoId);
-        return ResponseEntity.ok(pilares);
     }
     
     @PutMapping("/{id}")
@@ -61,6 +42,31 @@ public class PilarCiberseguridadController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> desactivar(@PathVariable Long id) {
         pilarService.desactivar(id);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
+    }
+
+    // ===================================================================
+    // PANEL 1 - RECLUTADOR / PÚBLICO (ACCESO LIBRE READ-ONLY)
+    // ===================================================================
+    
+    @GetMapping("/{id}")
+    public ResponseEntity<PilarCiberseguridadDTO> obtenerPorId(@PathVariable Long id) {
+        // CORRECCIÓN: Cambiado obtainPorId por obtenerPorId para hacer match con el Service
+        return ResponseEntity.ok(pilarService.obtenerPorId(id));
+    }
+    
+    @GetMapping
+    public ResponseEntity<List<PilarCiberseguridadDTO>> listarTodos() {
+        return ResponseEntity.ok(pilarService.listarTodos());
+    }
+    
+    @GetMapping("/activos")
+    public ResponseEntity<List<PilarCiberseguridadDTO>> listarActivos() {
+        return ResponseEntity.ok(pilarService.listarActivos());
+    }
+    
+    @GetMapping("/entorno/{entornoId}")
+    public ResponseEntity<List<PilarCiberseguridadDTO>> listarPorEntorno(@PathVariable Long entornoId) {
+        return ResponseEntity.ok(pilarService.listarPorEntorno(entornoId));
     }
 }

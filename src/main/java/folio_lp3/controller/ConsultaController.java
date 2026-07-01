@@ -15,7 +15,7 @@ import java.util.Map;
  * Controller REST para Consulta
  */
 @RestController
-@RequestMapping("/consultas")
+@RequestMapping("/api/v1/consultas")
 @RequiredArgsConstructor
 @CrossOrigin(origins = "*")
 public class ConsultaController {

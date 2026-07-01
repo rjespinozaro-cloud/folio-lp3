@@ -15,7 +15,7 @@ import java.util.Map;
  * Controlador para verificar el estado de la API (Health Check)
  */
 @RestController
-@RequestMapping("/salud")
+@RequestMapping("/api/v1/salud")
 @RequiredArgsConstructor
 @CrossOrigin(origins = "*")
 public class SaludController {

@@ -5,102 +5,89 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import java.util.Arrays;
-
-/**
- * Configuración de Spring Security con RBAC
- * Control de acceso basado en roles
- */
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
-    
-    private final JwtAuthenticationFilter jwtAuthenticationFilter;
-    
-    /**
-     * Configurar cadena de filtros de seguridad
-     */
+
+    private final JwtAuthenticationFilter jwtAuthFilter;
+    private final AuthenticationProvider authenticationProvider;
+
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                // Deshabilitar CSRF (ya que usamos JWT)
                 .csrf(csrf -> csrf.disable())
-                
-                // Configurar CORS
-                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                
-                // Configurar autorización de endpoints (SIN REPETIR /api/v1)
                 .authorizeHttpRequests(auth -> auth
-                        // Endpoints públicos (sin autenticación)
-                        .requestMatchers("/autenticacion/**").permitAll()
-                        .requestMatchers("/salud/**").permitAll()
-                        
-                        // Endpoints solo para ADMINISTRADOR
-                        .requestMatchers(HttpMethod.POST, "/usuarios/**").hasRole("ADMINISTRADOR")
-                        .requestMatchers(HttpMethod.DELETE, "/usuarios/**").hasRole("ADMINISTRADOR")
-                        .requestMatchers(HttpMethod.PUT, "/usuarios/**").hasRole("ADMINISTRADOR")
-                        
-                        // Endpoints solo para INSTRUCTOR
-                        .requestMatchers(HttpMethod.GET, "/consultas/pilar/**").hasRole("INSTRUCTOR")
-                        .requestMatchers(HttpMethod.PUT, "/consultas/**").hasRole("INSTRUCTOR")
-                        
-                        // Endpoints solo para ESTUDIANTE
-                        .requestMatchers(HttpMethod.POST, "/consultas/**").hasRole("ESTUDIANTE")
-                        .requestMatchers(HttpMethod.POST, "/preguntas-ia/**").hasRole("ESTUDIANTE")
-                        
-                        // Reportes solo para ADMINISTRADOR e INSTRUCTOR
-                        .requestMatchers("/reportes/**").hasAnyRole("ADMINISTRADOR", "INSTRUCTOR")
-                        
-                        // El resto requiere autenticación
+                        // ===================================================================
+                        // 1. RECURSOS ESTÁTICOS, ARCHIVOS DE ASSETS Y EVIDENCIAS BINARIAS (PÚBLICOS)
+                        // ===================================================================
+                        // Se consolidan todos los assets y las carpetas de carga del sistema de archivos aquí
+                        .requestMatchers(
+                                "/",
+                                "/index.html",
+                                "/panel.html",
+                                "/css/**",
+                                "/js/**",
+                                "/images/**",
+                                "/uploads/**",
+                                "/docs/**",
+                                "/favicon.ico",
+                                "/error"
+                        ).permitAll()
+
+                        // ===================================================================
+                        // 2. FRAGMENTOS MODULARES (DISEÑO SPA)
+                        // ===================================================================
+                        // Personaje 1 (Reclutador): Módulos del portafolio público son libres
+                        .requestMatchers("/html/modulos-publicos/**").permitAll()
+
+                        // Personaje 2 (Admin): Los fragmentos del panel de gestión se blindan antes que las APIs
+                        .requestMatchers("/html/modulos-admin/**").hasAuthority("ADMINISTRADOR")
+
+                        // ===================================================================
+                        // 3. ENDPOINTS DE LA API REST (DATOS ESPECÍFICOS)
+                        // ===================================================================
+                        // Autenticación pública para el login del Administrador y endpoints de salud
+                        .requestMatchers(
+                                "/api/v1/autenticacion/**",
+                                "/api/v1/salud/**"
+                        ).permitAll()
+
+                        // ACCESO RECLUTADOR (Cyber Assistant): El chat con IA y su calificación son públicos
+                        .requestMatchers(HttpMethod.POST, "/api/v1/preguntas-ia/preguntar").permitAll()
+                        .requestMatchers(HttpMethod.PUT, "/api/v1/preguntas-ia/{id}/calificar").permitAll()
+
+                        // PROTECCIÓN DE ENDPOINTS ADMINISTRATIVOS CRÍTICOS (Se evalúan antes de los comodines genéricos)
+                        .requestMatchers("/api/v1/admin/**").hasAuthority("ADMINISTRADOR")
+                        .requestMatchers("/api/v1/configuracion-ia/**").hasAuthority("ADMINISTRADOR")
+
+                        // ===================================================================
+                        // 4. REGLAS GENÉRICAS / COMODINES (SIEMPRE AL FINAL)
+                        // ===================================================================
+                        // ACCESO EXCLUSIVO ADMINISTRADOR (Mutaciones): Crear, Editar o Borrar exige autoridad
+                        .requestMatchers(HttpMethod.POST, "/api/v1/**").hasAuthority("ADMINISTRADOR")
+                        .requestMatchers(HttpMethod.PUT, "/api/v1/**").hasAuthority("ADMINISTRADOR")
+                        .requestMatchers(HttpMethod.DELETE, "/api/v1/**").hasAuthority("ADMINISTRADOR")
+
+                        // ACCESO RECLUTADOR (Solo lectura pública genérica para cargar los mosaicos)
+                        .requestMatchers(HttpMethod.GET, "/api/v1/**").permitAll()
+
+                        // Fallback de seguridad perimetral total
                         .anyRequest().authenticated()
                 )
-                
-                // Política de sesión sin estado (Stateless)
-                .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                )
-                
-                // Agregar filtro JWT antes del filtro de autenticación
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-        
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authenticationProvider(authenticationProvider)
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+
         return http.build();
-    }
-    
-    /**
-     * Configurar CORS
-     */
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("*"));
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
-        configuration.setExposedHeaders(Arrays.asList("Authorization"));
-        configuration.setAllowCredentials(false);
-        configuration.setMaxAge(3600L);
-        
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
-        return source;
-    }
-    
-    /**
-     * Bean para encriptación de contraseñas
-     */
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
     }
 }

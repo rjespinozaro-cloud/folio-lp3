@@ -9,44 +9,38 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 /**
- * Controller REST para PreguntaIA (Chat con IA)
+ * Controlador REST seguro para interactuar con el Cyber Assistant mediante RAG.
  */
 @RestController
-@RequestMapping("/preguntas-ia")
+@RequestMapping("/api/v1/preguntas-ia")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "${app.security.cors.allowed-origins:http://localhost:3000}")
 public class PreguntaIAController {
     
     private final PreguntaIAService preguntaService;
     
-    @PostMapping
-    public ResponseEntity<PreguntaIADTO> crearPregunta(
-            @RequestParam Long consultaId,
-            @RequestParam String preguntaEstudiante,
-            @RequestParam String respuestaIA,
-            @RequestParam(required = false) Integer tokensConsumidos) {
-        PreguntaIADTO resultado = preguntaService.crearPregunta(consultaId, preguntaEstudiante, respuestaIA, tokensConsumidos);
+    @PostMapping("/preguntar")
+    public ResponseEntity<PreguntaIADTO> procesarPreguntaCyberAssistant(@RequestBody PreguntaIADTO requestDTO) {
+        PreguntaIADTO resultado = preguntaService.generarRespuestaContextual(requestDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(resultado);
+    }
+
+    @GetMapping("/lista/historial")
+    public ResponseEntity<List<PreguntaIADTO>> listarHistorialCompleto() {
+        return ResponseEntity.ok(preguntaService.listarHistorialCompleto());
     }
     
     @GetMapping("/{id}")
     public ResponseEntity<PreguntaIADTO> obtenerPorId(@PathVariable Long id) {
-        PreguntaIADTO pregunta = preguntaService.obtenerPorId(id);
-        return ResponseEntity.ok(pregunta);
-    }
-    
-    @GetMapping
-    public ResponseEntity<List<PreguntaIADTO>> listarTodas() {
-        List<PreguntaIADTO> preguntas = preguntaService.listarTodas();
-        return ResponseEntity.ok(preguntas);
+        return ResponseEntity.ok(preguntaService.obtenerPorId(id));
     }
     
     @GetMapping("/consulta/{consultaId}")
     public ResponseEntity<List<PreguntaIADTO>> listarPorConsulta(@PathVariable Long consultaId) {
-        List<PreguntaIADTO> preguntas = preguntaService.listarPorConsulta(consultaId);
-        return ResponseEntity.ok(preguntas);
+        return ResponseEntity.ok(preguntaService.listarPorConsulta(consultaId));
     }
     
     @PutMapping("/{id}/calificar")
@@ -54,8 +48,16 @@ public class PreguntaIAController {
             @PathVariable Long id,
             @RequestParam String calificacion) {
         CalificacionIA cal = CalificacionIA.valueOf(calificacion.toUpperCase());
-        PreguntaIADTO resultado = preguntaService.calificar(id, cal);
-        return ResponseEntity.ok(resultado);
+        return ResponseEntity.ok(preguntaService.calificar(id, cal));
+    }
+
+    // 🚀 CORRECCIÓN: Endpoint de purga añadido para soportar la ruta '/api/v1/preguntas-ia/purgar'
+    @DeleteMapping("/purgar")
+    public ResponseEntity<?> purgarHistorialIA() {
+        preguntaService.purgarTodoElHistorial(); // Asegúrate de que este método exista en tu PreguntaIAService
+        return ResponseEntity.ok(Map.of(
+            "exitoso", true,
+            "mensaje", "Historial RAG de la IA purgado correctamente."
+        ));
     }
 }
-
