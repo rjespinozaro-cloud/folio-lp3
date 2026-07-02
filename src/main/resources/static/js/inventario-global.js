@@ -115,7 +115,7 @@ function listarPracticasCrud(token) {
                 <div style="margin-top:auto; display:flex; justify-content:space-between; align-items:center; border-top:1px solid var(--border-dim); padding-top:0.75rem; gap:8px;">
                     <div style="display:flex; gap:6px;">
                         ${p.rutaDocumento ? `<a href="${p.rutaDocumento}" target="_blank" style="color:var(--cyan); font-size:0.8rem; text-decoration:none; font-weight:600; font-family:var(--font-ui); align-self:center; margin-right:4px;">👁 VIEW</a>` : ''}
-                        <button class="btn-delete-action btn-edit-lab" style="background:rgba(59,130,246,0.12) !important; color:var(--cyan) !important; border-color:rgba(59,130,246,0.3) !important;">✏️ EDIT</button>
+                        <button class="btn-delete-action btn-edit-lab" style="background:rgba(59,130,246,0.12) !important; color:var(--cyan) !important; border-color:rgba(59,130,246,0.3) !important;">EDIT</button>
                     </div>
                     <button class="btn-delete-action btn-purge-lab">🗑 PURGE</button>
                 </div>`;
@@ -236,7 +236,7 @@ async function listarCertificacionesCrud(token) {
                 <div style="margin-top:auto; display:flex; justify-content:space-between; align-items:center; border-top:1px solid var(--border-dim); padding-top:0.75rem; gap:8px;">
                     <div style="display:flex; gap:6px;">
                         ${c.urlValidacion ? `<a href="${c.urlValidacion}" target="_blank" style="color:var(--lime); font-size:0.8rem; text-decoration:none; font-weight:600; font-family:var(--font-ui); align-self:center; margin-right:4px;">👁 VALIDATE</a>` : '<span style="color:var(--text-dim); font-size:0.75rem; font-family:var(--font-ui); align-self:center; margin-right:4px;">🔒 INT</span>'}
-                        <button class="btn-delete-action btn-edit-cert" style="background:rgba(59,130,246,0.12) !important; color:var(--cyan) !important; border-color:rgba(59,130,246,0.3) !important;">✏️ EDIT</button>
+                        <button class="btn-delete-action btn-edit-cert" style="background:rgba(59,130,246,0.12) !important; color:var(--cyan) !important; border-color:rgba(59,130,246,0.3) !important;">EDIT</button>
                     </div>
                     <button class="btn-delete-action btn-revoke-cert">🗑 REVOKE</button>
                 </div>`;
