@@ -8,7 +8,6 @@
 </head>
 <body class="sec-matrix-root">
 
-<!-- ── LOGIN ─────────────────────────────────────────────────────────────── -->
 <div id="login-container" class="sec-gateway-overlay">
   <div class="sec-gateway-card">
     <div class="sec-gateway-header">
@@ -54,7 +53,6 @@
   </div>
 </div>
 
-<!-- ── PANEL LAYOUT ───────────────────────────────────────────────────────── -->
 <div id="panel-layout" class="sec-viewport-layout" style="display: none;">
 
   <aside class="sec-sidebar-navigation">
@@ -122,6 +120,14 @@
         Estadísticas
       </button>
 
+      <button onclick="cargarModulo('seguridad-perimetral')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;margin-right:8px;">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+        </svg>
+        Cortafuegos & Red
+      </button>
+
       <button onclick="cargarModulo('administracion')">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;margin-right:8px;">
           <circle cx="12" cy="12" r="3"/>
@@ -156,5 +162,6 @@
 <script src="/js/dashboard-siem.js"></script>
 <script src="/js/inventario-global.js"></script>
 <script src="/js/HerramientaController.js"></script>
+<script src="/js/seguridad-perimetral.js"></script>
 </body>
 </html>

@@ -1,6 +1,16 @@
 /**
- * CYBER-PORTFOLIO :: MODULE -> DASHBOARD SIEM
+ * CYBER-PORTFOLIO :: MODULE -> DASHBOARD SIEM (CADENA ULTRA-VELOZ 1s & DETALLE EXPANDE_ERROR)
  */
+
+function calcularNivelAmenaza(status, tieneError) {
+    if (status >= 500 || (status === 401 && tieneError)) {
+        return { etiqueta: "CRITICAL", clase: "alert-critical" };
+    }
+    if (status >= 400) {
+        return { etiqueta: "MEDIUM", clase: "alert-medium" };
+    }
+    return { etiqueta: "LOW", clase: "alert-low" };
+}
 
 async function cargarTelemetriaDashboard(token) {
     const tableBody  = document.getElementById("siem-table-body");
@@ -14,67 +24,98 @@ async function cargarTelemetriaDashboard(token) {
         if (!res.ok) throw new Error();
         const logs = await res.json();
 
-        // 1. Actualizar Contadores Globales
+        // 1. 🛡️ CONTROL ANTI-PARPADEO EN CONTADORES GLOBALES
         if (countLogs) {
-            animarContador(countLogs, logs.length);
+            const nuevoTotal = logs.length;
+            if (parseInt(countLogs.innerText) !== nuevoTotal) {
+                animarContador(countLogs, nuevoTotal);
+            }
         }
+        
         if (tokensCard) {
-            const total = logs.reduce((acc, l) => acc + (l.tokensConsumidos || 0), 0);
-            animarContador(tokensCard, total);
+            // 💡 NUEVO PROTOCOLO: Filtramos y contamos estrictamente por IPs de origen únicas
+            // Esto permite que si un administrador usa Tailscale y Red Local en paralelo, marque "2"
+            const ipsUnicas = new Set(
+                logs
+                    .map(l => l.ipOrigen)
+                    .filter(ip => ip && ip.trim() !== "" && ip !== "unknown")
+            );
+            
+            const totalEntornos = ipsUnicas.size || (logs.length ? 1 : 0);
+            
+            if (parseInt(tokensCard.innerText) !== totalEntornos) {
+                animarContador(tokensCard, totalEntornos);
+            }
         }
 
         if (!tableBody) return;
 
-        // 2. 🔥 FIJACIÓN DE PURGA INTEGRAL: Si la BD viene vacía, limpia la UI inmediatamente
+        // 2. FIJACIÓN DE PURGA INTEGRAL
         if (!logs.length) {
-            tableBody.innerHTML = '<tr><td colspan="7" class="siem-table-fallback">No hay logs de red interceptados. Nivel de amenaza: CERO.</td></tr>';
+            tableBody.innerHTML = '<tr><td colspan="8" class="siem-table-fallback">No hay logs de red interceptados. Nivel de amenaza: CERO.</td></tr>';
             return;
         }
 
-        // 3. Control de contingencia para limpiar el mensaje de fallback si entran nuevos logs
         if (tableBody.querySelector('.siem-table-fallback')) {
             tableBody.innerHTML = "";
         }
 
-        // 4. 🔥 SINCRONIZACIÓN INTELIGENTE: Eliminar del DOM los logs que ya no existen en la BD (Post-Purga)
+        // 3. SINCRONIZACIÓN INTELIGENTE DE CADENA (Elimina únicamente lo viejo)
         const listaIdsNuevos = logs.map(l => `log-${l.timestamp}-${l.endpoint.replace(/\//g, '-')}`);
         Array.from(tableBody.children).forEach(row => {
             if (row.id && !listaIdsNuevos.includes(row.id)) {
-                row.remove(); // Remueve de pantalla lo que ya no está en la BD
+                row.remove(); 
             }
         });
 
-        // 5. Inyección ordenada de registros nuevos
-        logs.slice().reverse().forEach((log) => {
+        // 4. INYECCIÓN EN CASCADA (Efecto empuje Matrix/Flujo Continuo)
+        logs.reverse().forEach((log) => {
             const logId = `log-${log.timestamp}-${log.endpoint.replace(/\//g, '-')}`;
-            if (document.getElementById(logId)) return; // Evita duplicar si ya está pintado
+            
+            if (document.getElementById(logId)) return; 
 
             const tr = document.createElement("tr");
             tr.id = logId;
-            tr.className = "siem-row-chain"; 
+            tr.className = "siem-row-chain siem-row-stream"; 
             tr.innerHTML = generarFilaSiemLog(log);
 
-            // Inserta al principio para ver la telemetría en tiempo real
             tableBody.insertBefore(tr, tableBody.firstChild);
         });
 
     } catch (err) {
         console.error("Error en la tubería SIEM:", err);
         if (tableBody && !tableBody.children.length) {
-            tableBody.innerHTML = `<tr><td colspan="7" class="error-table">⚠ Error de enlace perimetral con los registros SIEM.</td></tr>`;
+            tableBody.innerHTML = `<tr><td colspan="8" class="error-table">⚠ Error de enlace perimetral con los registros SIEM.</td></tr>`;
         }
     }
 }
+
 function generarFilaSiemLog(log) {
     const fecha = log.timestamp ? new Date(log.timestamp).toLocaleString() : new Date().toLocaleString();
-    const errorCorto = log.detallesError
-        ? `<span class="error-tag-table" title="${log.detallesError}">⚠️ ${log.detallesError.substring(0, 30)}...</span>`
-        : '<span class="success-tag-table">✓ Clean</span>';
+    
+    // 🔍 AMPLIACIÓN DE DETALLES: Subido de 30 a 85 caracteres + guardado completo para debugging
+    let errorCorto = '<span class="success-tag-table">✓ clean</span>';
+    if (log.detallesError) {
+        const textoLimpio = log.detallesError.replace(/"/g, '&quot;');
+        errorCorto = `
+            <span class="error-tag-table" 
+                  title="${textoLimpio}" 
+                  data-error-raw="${textoLimpio}"
+                  style="cursor:help; font-size:11px; font-family:monospace; color:#ff4444; word-break:break-all;"
+                  onclick="console.dir(this.dataset.errorRaw)">
+                ⚠️ ${log.detallesError.length > 85 ? log.detallesError.substring(0, 85) + '...' : log.detallesError}
+            </span>`;
+    }
     
     const status = log.statusHttp || 200;
     const statusClass = status >= 400 ? 'status-http-bad' : 'status-http-good';
+    
+    // Alerta calculada con icono SVG integrado
+    const am = calcularNivelAmenaza(status, !!log.detallesError);
+    const iconAlert = `<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline-block;vertical-align:middle;margin-right:4px;"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>`;
 
     return `
+        <td><span class="siem-badge-alert ${am.clase}">${iconAlert}${am.etiqueta}</span></td>
         <td><code>${fecha}</code></td>
         <td><span class="badge-method">${log.metodoHttp || 'GET'}</span></td>
         <td><code>${log.endpoint || '/'}</code></td>

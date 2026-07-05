@@ -18,6 +18,22 @@ window.inicializarConfiguracionIA = function(token) {
         document.getElementById("ia-id").value = "";
     }
     
+    // 🔒 DETONADOR ANTI-AUTOCOMPLETADO: Engañamos a los gestores de contraseñas asignando new-password
+    formIa.setAttribute("autocomplete", "off");
+    formIa.querySelectorAll("input, textarea").forEach(input => {
+        input.setAttribute("autocomplete", "new-password");
+        input.setAttribute("spellcheck", "false");
+    });
+
+    // Pequeño delay controlado para limpiar cualquier residuo que el navegador intente inyectar a la fuerza
+    setTimeout(() => {
+        const idVal = document.getElementById("ia-id").value;
+        if (!idVal) { 
+            if (document.getElementById("ia-model-name")) document.getElementById("ia-model-name").value = "";
+            if (document.getElementById("ia-gemini-key")) document.getElementById("ia-gemini-key").value = "";
+        }
+    }, 40);
+    
     // Dejar los toggles visuales en su estado inicial por defecto (Gemini visible, Ollama oculto)
     if (wrapperGemini) wrapperGemini.style.display = "block";
     if (wrapperOllama) wrapperOllama.style.display = "none";
@@ -62,6 +78,15 @@ window.inicializarConfiguracionIA = function(token) {
             
             formIa.reset();
             document.getElementById("ia-id").value = "";
+            
+            // Re-limpieza manual post-reset para que el navegador no se confunda
+            formIa.querySelectorAll("input, textarea").forEach(input => {
+                if (input.id !== "ia-ollama-url") input.value = "";
+            });
+            if (document.getElementById("ia-ollama-url")) {
+                document.getElementById("ia-ollama-url").value = "http://localhost:11434";
+            }
+
             if (providerSelect) providerSelect.dispatchEvent(new Event('change'));
             
             listarTablaIA(token);
@@ -70,7 +95,7 @@ window.inicializarConfiguracionIA = function(token) {
     };
 };
 
-// Función encargada únicamente de pintar las filas de la tabla
+// Función encargada únicamente de pintar las filas de la tabla (100% Completa)
 function listarTablaIA(token) {
     const tableBody = document.getElementById("ia-table-body");
     if (!tableBody) return;

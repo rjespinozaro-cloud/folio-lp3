@@ -21,7 +21,7 @@ function cargarModulo(nombreModulo) {
         contenedor.style.transform = "translateY(6px)";
     }
 
-    // El archivo cargado siempre será exactamente herramientas.html si se pasa 'herramientas'
+    // El archivo cargado se mapea dinámicamente según el nombre pasado por el menú
     fetch(`/html/modulos-admin/${nombreModulo}.html`, {
         headers: { "Authorization": "Bearer " + token }
     })
@@ -83,7 +83,6 @@ function ejecutarInicializadorModulo(modulo) {
             if (typeof listarCertificacionesCrud === 'function') {
                 listarCertificacionesCrud(token);
             }
-            // 🛡️ CORRECCIÓN DE FLUJO: Interceptamos el Submit del Formulario igual que en Herramientas
             setTimeout(() => {
                 const formCert = document.getElementById("form-certificaciones");
                 if (formCert && typeof guardarCertificacion === 'function') {
@@ -92,7 +91,6 @@ function ejecutarInicializadorModulo(modulo) {
                         guardarCertificacion(token);
                     };
                 }
-                // Si el botón está fuera del form o requiere un trigger alternativo por herencia:
                 const btnGuardarCert = document.getElementById("btn-guardar-cert");
                 if (btnGuardarCert) {
                     btnGuardarCert.onclick = () => {
@@ -107,12 +105,10 @@ function ejecutarInicializadorModulo(modulo) {
             if (typeof listarHerramientasCrud === 'function') {
                 listarHerramientasCrud(token); 
             }
-            
             setTimeout(() => {
                 if (typeof cargarPilaresEnFormulario === 'function') {
                     cargarPilaresEnFormulario(token);
                 }
-
                 const formTool = document.getElementById("form-herramientas");
                 if (formTool && typeof guardarHerramienta === 'function') {
                     formTool.onsubmit = function(e) {
@@ -126,7 +122,6 @@ function ejecutarInicializadorModulo(modulo) {
         case 'estadisticas':
             if (typeof cargarAnaliticaIa === 'function') {
                 cargarAnaliticaIa(token);
-                
                 window.siemIntervalId = setInterval(() => {
                     if (document.getElementById("stats-table-body")) {
                         cargarAnaliticaIa(token);
@@ -138,7 +133,6 @@ function ejecutarInicializadorModulo(modulo) {
             }
             break;
 
-        // 🔥 ¡CORRECCIÓN AQUÍ!: Inyección y enganche dinámico para la pestaña de la IA
         case 'ia-config':
             if (typeof window.inicializarConfiguracionIA === 'function') {
                 window.inicializarConfiguracionIA(token);
@@ -147,12 +141,19 @@ function ejecutarInicializadorModulo(modulo) {
             }
             break;
 
-        // 🛡️ CORRECCIÓN SEVERA: Retardo controlado para inyección segura de eventos de purga
+        // 🛡️ NUEVO CASO INTEGRADO: Conexión asíncrona al Cortafuegos IPS y telemetría de Red
+        case 'seguridad-perimetral':
+            if (typeof inicializarModuloSeguridad === 'function') {
+                inicializarModuloSeguridad(token);
+            } else {
+                console.warn("⚠️ Advertencia: inicializarModuloSeguridad no está declarada en seguridad-perimetral.js.");
+            }
+            break;
+
         case 'administracion':
             if (typeof verificarSaludSistema === 'function') {
                 verificarSaludSistema(token);
             }
-            
             setTimeout(() => {
                 const btnPurgarSiem = document.getElementById("btn-purgar-siem");
                 const btnPurgarChat = document.getElementById("btn-purgar-chat");
@@ -171,7 +172,7 @@ function ejecutarInicializadorModulo(modulo) {
                         }
                     };
                 }
-            }, 150); // Da tiempo a que el DOM dibuje los botones
+            }, 150);
             break;
     }
 }

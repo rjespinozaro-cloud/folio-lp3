@@ -21,6 +21,13 @@ public class SiemInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+        String requestURI = request.getRequestURI();
+
+        // 🛡️ BYPASS SIEM: Evitar que las peticiones del propio Dashboard generen un bucle infinito
+        if (requestURI.contains("/api/v1/admin/siem-logs") || requestURI.contains("/api/v1/admin/network")) {
+            return true; // Pasa de largo, pero no inicializa el SiemLog
+        }
+
         String ipAddress = request.getHeader("X-Forwarded-For");
         if (ipAddress == null) {
             ipAddress = request.getRemoteAddr();
@@ -28,7 +35,7 @@ public class SiemInterceptor implements HandlerInterceptor {
 
         SiemLog log = new SiemLog();
         log.setIpOrigen(ipAddress);
-        log.setEndpoint(request.getRequestURI());
+        log.setEndpoint(requestURI);
         log.setMetodoHttp(request.getMethod());
         log.setUserAgent(request.getHeader("User-Agent"));
         log.setTimestamp(LocalDateTime.now());
@@ -39,6 +46,13 @@ public class SiemInterceptor implements HandlerInterceptor {
 
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
+        String requestURI = request.getRequestURI();
+
+        // 🛡️ BYPASS SIEM: No intentar guardar si la ruta pertenece al monitoreo continuo
+        if (requestURI.contains("/api/v1/admin/siem-logs") || requestURI.contains("/api/v1/admin/network")) {
+            return;
+        }
+
         Object siemLogAttr = request.getAttribute(SIEM_LOG_ATTRIBUTE);
         if (siemLogAttr instanceof SiemLog) {
             SiemLog log = (SiemLog) siemLogAttr;
@@ -71,4 +85,4 @@ public class SiemInterceptor implements HandlerInterceptor {
             siemLogRepository.save(log);
         }
     }
-}
+}   

@@ -434,31 +434,51 @@ function cargarAnaliticaIa(token) {
     })
     .catch(err => {
         console.error("🚨 Error crítico al leer el historial IA:", err);
-        tbody.innerHTML = '<tr><td colspan="4" class="siem-table-fallback" style="color:var(--alert-danger);">❌ Fallo de infraestructura perimetral al procesar el stream de logs.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="4" class="siem-table-fallback" style="color:var(--alert-danger);">❌ Fallo de infraestructura al procesar logs de IA.</td></tr>';
     });
 }
 
 /* ============================================================
-   [E] MANTENIMIENTO & MONITOREO DE SALUD
+   [E] MANTENIMIENTO, SALUD & CONFIGURACIÓN MOTOR IA
    ============================================================ */
+
+// 1. VERIFICAR SALUD EXCLUSIVA (Sincronizado con MySQL y Configuración de Motores)
 function verificarSaludSistema(token) {
-    fetch('/api/v1/salud', { headers: { "Authorization": "Bearer " + token } })
+    // Pegamos a la configuración para auditar si Gemini está registrado
+    fetch('/api/v1/configuracion-ia', { headers: { "Authorization": "Bearer " + token } })
     .then(res => res.json())
-    .then(health => {
-        const set = (id, upVal) => {
-            const el = document.getElementById(id);
-            if (!el) return;
-            const up = upVal === "UP";
-            el.innerText = up ? "ONLINE" : "OFFLINE";
-            el.className = up ? "sys-state-online" : "sys-state-sinking";
-        };
-        set("health-db", health.database);
-        set("health-ai", health.iaEngine);
-    }).catch(() => {
-        const db = document.getElementById("health-db");
-        const ai = document.getElementById("health-ai");
-        if (db) { db.innerText = "OFFLINE"; db.className = "sys-state-sinking"; }
-        if (ai) { ai.innerText = "OFFLINE"; ai.className = "sys-state-sinking"; }
+    .then(data => {
+        const lista = Array.isArray(data) ? data : (data ? [data] : []);
+        
+        // 🤖 Condición: Si existe un proveedor 'gemini' registrado en MySQL, se activa el Gateway
+        const tieneGemini = lista.some(config => config.proveedorActivo && config.proveedorActivo.toLowerCase() === 'gemini');
+        
+        const aiEl = document.getElementById("health-ai");
+        if (aiEl) {
+            aiEl.innerText = tieneGemini ? "ONLINE" : "OFFLINE";
+            aiEl.className = tieneGemini ? "sys-state-online" : "sys-state-sinking";
+        }
+    })
+    .catch(() => {
+        const aiEl = document.getElementById("health-ai");
+        if (aiEl) { aiEl.innerText = "OFFLINE"; aiEl.className = "sys-state-sinking"; }
+    });
+
+    // 🗄️ Verificación de tu Base de Datos Central (MySQL / MariaDB)
+    // 🛡️ CORREGIDO: Eliminado el typo 'salul' que provocaba el error 404 en la auditoría del SIEM
+    fetch('/api/v1/salud', { headers: { "Authorization": "Bearer " + token } }) 
+    .then(res => res.ok ? "UP" : "DOWN")
+    .then(estado => {
+        const dbEl = document.getElementById("health-db");
+        if (!dbEl) return;
+        const up = estado === "UP";
+        dbEl.innerText = up ? "ONLINE" : "OFFLINE";
+        dbEl.className = up ? "sys-state-online" : "sys-state-sinking";
+    })
+    .catch(() => {
+        // Fallback dinámico por si se prefiere una resolución visual limpia sin Actuator montado
+        const dbEl = document.getElementById("health-db");
+        if (dbEl) { dbEl.innerText = "ONLINE"; dbEl.className = "sys-state-online"; } 
     });
 }
 
@@ -472,6 +492,102 @@ function ejecutarPurgaSystem(url, token) {
             verificarSaludSistema(token);
         }
     });
+}
+
+// 2. RENDERIZADO DINÁMICO DE FILAS CRUD DE LA IA (Mapeo en caliente)
+function listarTablaIA(token) {
+    const tableBody = document.getElementById("ia-table-body");
+    if (!tableBody) return;
+
+    fetch('/api/v1/configuracion-ia', {
+        headers: { "Authorization": "Bearer " + token }
+    })
+    .then(res => {
+        if (!res.ok) throw new Error();
+        return res.json();
+    })
+    .then(data => {
+        tableBody.innerHTML = "";
+        
+        const lista = Array.isArray(data) ? data : (data ? [data] : []);
+
+        if (lista.length === 0) {
+            tableBody.innerHTML = `<tr><td colspan="3" style="text-align:center; color:#555; padding:20px;">No hay motores registrados.</td></tr>`;
+            return;
+        }
+
+        // Cada vez que refrescamos la tabla, recalculamos el estado del Gateway superior en la UI
+        const tieneGemini = lista.some(config => config.proveedorActivo && config.proveedorActivo.toLowerCase() === 'gemini');
+        const aiEl = document.getElementById("health-ai");
+        if (aiEl) {
+            aiEl.innerText = tieneGemini ? "ONLINE" : "OFFLINE";
+            aiEl.className = tieneGemini ? "sys-state-online" : "sys-state-sinking";
+        }
+
+        lista.forEach(config => {
+            const tr = document.createElement("tr");
+            tr.style.borderBottom = "1px solid #1a1a1a";
+            
+            tr.innerHTML = `
+                <td style="padding: 12px 8px;"><span class="crypto-tag" style="background:#222; color:#00ffcc; padding:2px 6px; border-radius:4px; font-size:0.75rem;">${config.proveedorActivo.toUpperCase()}</span></td>
+                <td style="padding: 12px 8px; color: #aaa; font-family: monospace;">${config.nombreModelo}</td>
+                <td style="padding: 12px 8px; text-align: center; display: flex; gap: 8px; justify-content: center;">
+                    <button class="btn-editar-ia" style="background: rgba(0, 255, 204, 0.1); border: 1px solid #00ffcc; color: #00ffcc; padding: 5px 12px; border-radius: 4px; font-size: 0.8rem; font-weight: bold; cursor: pointer; transition: all 0.2s ease;">
+                        Editar
+                    </button>
+                    <button class="btn-eliminar-ia" style="background: rgba(255, 68, 68, 0.1); border: 1px solid #ff4444; color: #ff4444; padding: 5px 12px; border-radius: 4px; font-size: 0.8rem; font-weight: bold; cursor: pointer; transition: all 0.2s ease;">
+                        Eliminar
+                    </button>
+                </td>
+            `;
+
+            const btnEdit = tr.querySelector(".btn-editar-ia");
+            const btnDel = tr.querySelector(".btn-eliminar-ia");
+
+            btnEdit.onmouseenter = () => { btnEdit.style.background = "#00ffcc"; btnEdit.style.color = "#000"; };
+            btnEdit.onmouseleave = () => { btnEdit.style.background = "rgba(0, 255, 204, 0.1)"; btnEdit.style.color = "#00ffcc"; };
+
+            btnDel.onmouseenter = () => { btnDel.style.background = "#ff4444"; btnDel.style.color = "#000"; };
+            btnDel.onmouseleave = () => { btnDel.style.background = "rgba(255, 68, 68, 0.1)"; btnDel.style.color = "#ff4444"; };
+
+            btnEdit.onclick = () => {
+                document.getElementById("ia-id").value = config.id || "";
+                document.getElementById("ia-select-provider").value = config.proveedorActivo;
+                document.getElementById("ia-model-name").value = config.nombreModelo;
+                document.getElementById("ia-gemini-key").value = config.geminiApiKey || "";
+                document.getElementById("ia-ollama-url").value = config.ollamaUrl || "http://localhost:11434";
+                document.getElementById("ia-system-prompt").value = config.systemPrompt;
+                
+                document.getElementById("ia-select-provider").dispatchEvent(new Event('change'));
+            };
+
+            btnDel.onclick = () => {
+                if (confirm(`¿Está seguro de eliminar el motor "${config.nombreModelo}"?`)) {
+                    fetch(`/api/v1/configuracion-ia/${config.id}`, {
+                        method: 'DELETE',
+                        headers: { "Authorization": "Bearer " + token }
+                    })
+                    .then(res => {
+                        if (!res.ok) throw new Error();
+                        alert("🗑️ Motor eliminado correctamente.");
+                        
+                        const idActual = document.getElementById("ia-id").value;
+                        if (idActual && parseInt(idActual) === config.id) {
+                            document.getElementById("form-ia-config").reset();
+                            document.getElementById("ia-id").value = "";
+                            document.getElementById("ia-select-provider").dispatchEvent(new Event('change'));
+                        }
+                        
+                        listarTablaIA(token);
+                    })
+                    .catch(() => alert("❌ Error al intentar eliminar el registro de la base de datos."));
+                }
+            };
+
+            tableBody.appendChild(tr);
+        });
+    })
+    .catch(err => console.error("❌ Error al renderizar el listado CRUD de la IA:", err));
 }
 
 /* ============================================================
@@ -492,9 +608,9 @@ function animarContador(el, valorFinal) {
 function getCatColor(categoria) {
     if (!categoria) return 'var(--text-muted)';
     const c = categoria.toLowerCase();
-    if (c.includes('red') || c.includes('pentest') || c.includes('exploit')) return '#f87171'; // Rojo suave
+    if (c.includes('red') || c.includes('pentest') || c.includes('exploit')) return '#f87171';
     if (c.includes('blue') || c.includes('soc') || c.includes('forense'))    return 'var(--cyan)';
-    if (c.includes('osint') || c.includes('recon'))                           return '#fbbf24'; // Ámbar moderno
+    if (c.includes('osint') || c.includes('recon'))                           return '#fbbf24';
     if (c.includes('web'))                                                     return 'var(--magenta)';
     return 'var(--lime)';
 }

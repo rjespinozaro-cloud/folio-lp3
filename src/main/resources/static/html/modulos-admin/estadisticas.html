@@ -1,79 +1,89 @@
-<div class="ai-analytics-wrapper">
-    <div class="node-maint-header" style="border-bottom: 1px solid var(--border-dim, #262626); padding-bottom: 1.25rem; margin-bottom: 1.5rem;">
-        <h2 style="display: flex; align-items: center; gap: 8px; font-size: 1.35rem; font-weight: 700; color: var(--text-bright, #ffffff); margin: 0;">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--cyan, #00d4ff);">
-                <line x1="18" y1="20" x2="18" y2="10"/>
-                <line x1="12" y1="20" x2="12" y2="4"/>
-                <line x1="6" y1="20" x2="6" y2="14"/>
+<div class="sys-maint-wrapper">
+    <div class="node-maint-header">
+        <h2>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;margin-right:8px;">
+                <circle cx="12" cy="12" r="3"/>
+                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
             </svg>
-            Analítica de Consultas e Interacciones del Reclutador
+            Gestión del Sistema y Tareas de Mantenimiento
         </h2>
-        <p style="font-size: 0.88rem; color: var(--text-muted, #a0a0a0); margin: 0.4rem 0 0 0; line-height: 1.4;">
-            Métricas acumuladas de uso del chatbot. Monitorea las preguntas del entrevistador y califica la precisión del motor RAG.
-        </p>
+        <p>Monitoreo del estado de salud de la infraestructura backend y purga segura de registros temporales de auditoría.</p>
     </div>
 
-    <section class="analytics-metrics-grid">
-        <div class="metric-node node-cyan">
-            <h4 style="display: flex; align-items: center; gap: 6px; margin: 0 0 0.5rem 0; font-family: var(--font-mono, monospace); font-size: 0.75rem; letter-spacing: 0.5px;">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-                </svg>
-                CONSULTAS PROCESADAS
-            </h4>
-            <h2 id="stats-total-preguntas" style="font-size: 2rem; font-weight: 700; margin: 0; line-height: 1.2;">0</h2>
-            <p style="font-size: 0.8rem; color: var(--text-muted, #a0a0a0); margin: 0.4rem 0 0 0;">Preguntas totales del chat</p>
-        </div>
-        
-        <div class="metric-node node-green">
-            <h4 style="display: flex; align-items: center; gap: 6px; margin: 0 0 0.5rem 0; font-family: var(--font-mono, monospace); font-size: 0.75rem; letter-spacing: 0.5px;">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                    <polyline points="20 6 9 17 4 12"/>
-                </svg>
-                FEEDBACK POSITIVO
-            </h4>
-            <h2 id="stats-feedback-ok" style="font-size: 2rem; font-weight: 700; margin: 0; line-height: 1.2;">0</h2>
-            <p style="font-size: 0.8rem; color: var(--text-muted, #a0a0a0); margin: 0.4rem 0 0 0;">Calificaciones de utilidad</p>
-        </div>
-        
-        <div class="metric-node node-amber">
-            <h4 style="display: flex; align-items: center; gap: 6px; margin: 0 0 0.5rem 0; font-family: var(--font-mono, monospace); font-size: 0.75rem; letter-spacing: 0.5px;">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="12" cy="12" r="1"/>
-                    <circle cx="19" cy="12" r="1"/>
-                    <circle cx="5" cy="12" r="1"/>
-                </svg>
-                LATENCIA DE RESPUESTA
-            </h4>
-            <h2 style="font-size: 2rem; font-weight: 700; margin: 0; line-height: 1.2;">1.2s</h2>
-            <p style="font-size: 0.8rem; color: var(--text-muted, #a0a0a0); margin: 0.4rem 0 0 0;">Promedio del pipeline LLM</p>
+    <section class="node-maint-section">
+        <h3>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;margin-right:6px;">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            </svg>
+            Estado Operativo de Microservicios
+        </h3>
+        <div class="sys-telemetry-grid">
+            <div class="sys-telemetry-item">
+                <span style="display:inline-flex;align-items:center;gap:7px;">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <ellipse cx="12" cy="5" rx="9" ry="3"/>
+                        <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/>
+                        <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/>
+                    </svg>
+                    Base de Datos MySQL / MariaDB
+                </span>
+                <strong id="health-db" class="sys-state-sinking">SINKING...</strong>
+            </div>
+            <div class="sys-telemetry-item">
+                <span style="display:inline-flex;align-items:center;gap:7px;">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                    </svg>
+                    JWT Security Core
+                </span>
+                <strong class="sys-state-online">ONLINE</strong>
+            </div>
+            <div class="sys-telemetry-item">
+                <span style="display:inline-flex;align-items:center;gap:7px;">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="3"/>
+                        <path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/>
+                        <path d="M15.54 8.46a5 5 0 0 1 0 7.07M8.46 8.46a5 5 0 0 0 0 7.07"/>
+                    </svg>
+                    Ollama/Gemini Gateway
+                </span>
+                <strong id="health-ai" class="sys-state-sinking">SINKING...</strong>
+            </div>
         </div>
     </section>
 
-    <section class="llm-log-panel">
+    <section class="node-maint-section" style="margin-top: 20px;">
         <h3>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;margin-right:6px;">
+                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                <line x1="12" y1="9" x2="12" y2="13"/>
+                <line x1="12" y1="17" x2="12.01" y2="17"/>
             </svg>
-            Historial Reciente de Consultas del Asistente
+            Operaciones Críticas (Destructivas)
         </h3>
-        
-        <div class="audit-table-scroll-wrapper">
-            <table class="audit-log-table">
-                <thead>
-                    <tr>
-                        <th style="width: 12%;">Fecha</th>
-                        <th style="width: 33%;">Pregunta del Reclutador</th>
-                        <th style="width: 43%;">Respuesta Emitida por IA</th>
-                        <th style="width: 12%;">Calificación</th>
-                    </tr>
-                </thead>
-                <tbody id="stats-table-body">
-                    <tr>
-                        <td colspan="4" class="audit-table-fallback">Analizando logs conversacionales en el core...</td>
-                    </tr>
-                </tbody>
-            </table>
+        <p style="color: #6b6b6b; margin-bottom: 15px;">Estas acciones impactan directamente sobre el almacenamiento persistente de la base de datos.</p>
+        <div class="sys-action-row">
+            <button id="btn-purgar-siem" class="sys-btn-purge">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;margin-right:6px;">
+                    <polyline points="3 6 5 6 21 6"/>
+                    <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+                    <line x1="10" y1="11" x2="10" y2="17"/>
+                    <line x1="14" y1="11" x2="14" y2="17"/>
+                    <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+                </svg>
+                PURGAR EVENTOS SIEM LOG
+            </button>
+            <button id="btn-purgar-chat" class="sys-btn-purge">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;margin-right:6px;">
+                    <polyline points="3 6 5 6 21 6"/>
+                    <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+                    <line x1="10" y1="11" x2="10" y2="17"/>
+                    <line x1="14" y1="11" x2="14" y2="17"/>
+                    <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+                </svg>
+                BORRAR HISTORIAL DE CHATBOT
+            </button>
         </div>
     </section>
 </div>
