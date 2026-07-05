@@ -314,3 +314,215 @@
         height: 30px;
     }
 }
+/* ============================================================
+   PORTFOLIO-PATCH-2.CSS :: OVERRIDE DE ESTILOS INLINE VIEJOS
+   PURPLE TEAM OPERATOR EDITION
+   Este es el HTML real que trae "style=" hardcodeado en cian
+   (#00d4ff), verde terminal (#39ff14), ambar (#ffb300) y fondos
+   grises (#0c0c0e/#141416/#242427) del tema SOC viejo.
+   El !important es obligatorio: un inline style normal SIEMPRE
+   gana sobre una clase externa, sin importar el orden de carga.
+   ============================================================ */
+
+/* ------------------------------------------------------------
+   [1] SUBTITULO SIDEBAR "Junior Cybersecurity Analyst"
+   Traia color: #00d4ff inline.
+   ------------------------------------------------------------ */
+.profile-summary p[style] {
+    color: var(--accent-tech) !important;
+}
+
+/* ------------------------------------------------------------
+   [2] HERO (.inicio-container .cyber-hero)
+   Fondo gris/negro puro + borde gris -> fondo/borde del tema.
+   ------------------------------------------------------------ */
+.inicio-container .cyber-hero[style] {
+    background: linear-gradient(135deg, var(--bg-surface) 0%, rgba(12, 6, 18, 0.9) 100%) !important;
+    border: 1px solid var(--border-color) !important;
+}
+.inicio-container .glitch-text[style] {
+    color: var(--accent-tech) !important;
+    text-shadow: 0 0 10px rgba(255, 45, 175, 0.5), 0 0 22px rgba(168, 85, 247, 0.3) !important;
+}
+.inicio-container .hero-bio[style] {
+    color: var(--text-secondary) !important;
+}
+
+/* Robot SVG del hero: trazos cian/verde/ambar -> rosa/violeta/azul */
+.bot-hero-sentinel svg path[stroke="#00d4ff"],
+.bot-hero-sentinel svg line[stroke="#00d4ff"] {
+    stroke: var(--accent-violet) !important;
+}
+.bot-hero-sentinel svg circle[stroke="#39ff14"] {
+    stroke: var(--accent-tech) !important;
+}
+.bot-hero-sentinel svg circle[fill="#39ff14"] {
+    fill: var(--accent-tech) !important;
+}
+.bot-hero-sentinel svg polygon[fill="#39ff14"] {
+    fill: var(--accent-tech) !important;
+}
+.bot-hero-sentinel svg circle[fill="#ffb300"] {
+    fill: var(--accent-warning) !important;
+}
+.robot-edge-hugger.bot-telemetry-watcher svg rect[stroke="#39ff14"],
+.robot-edge-hugger.bot-telemetry-watcher svg path[stroke="#39ff14"] {
+    stroke: var(--accent-tech) !important;
+}
+
+/* ------------------------------------------------------------
+   [3] TECH BADGES inline (AWS Cloud / Linux / Cisco / etc.)
+   Cada badge trae su propio color+borde inline distinto.
+   Los unificamos en la paleta, manteniendo 3 acentos de
+   variedad (rosa / violeta / azul) en vez de cian/verde/ambar.
+   ------------------------------------------------------------ */
+.tech-badges .badge[style*="212, 255"] {
+    background: rgba(255, 45, 175, 0.12) !important;
+    border: 1px solid var(--accent-tech) !important;
+    color: var(--accent-tech) !important;
+}
+.tech-badges .badge[style*="255, 20"] {
+    background: rgba(57, 197, 255, 0.12) !important;
+    border: 1px solid var(--accent-safe) !important;
+    color: var(--accent-safe) !important;
+}
+.tech-badges .badge[style*="179, 0"] {
+    background: rgba(168, 85, 247, 0.14) !important;
+    border: 1px solid var(--accent-violet) !important;
+    color: var(--accent-violet) !important;
+}
+.tech-badges .badge[style*="#141416"] {
+    background: rgba(199, 60, 235, 0.05) !important;
+    border: 1px solid var(--border-color) !important;
+    color: var(--text-secondary) !important;
+}
+
+/* ------------------------------------------------------------
+   [4] METRIC CARDS inline (.telemetry-grid .metric-card)
+   Fondo/borde gris solido + iconos cian/ambar/verde inline.
+   ------------------------------------------------------------ */
+.telemetry-grid .metric-card[style] {
+    background: linear-gradient(135deg, var(--bg-surface) 0%, rgba(20, 8, 30, 0.75) 100%) !important;
+    border: 1px solid var(--border-color) !important;
+}
+.telemetry-grid .metric-card[style]:hover {
+    border-color: var(--accent-tech) !important;
+}
+.metric-icon[style*="212, 255"] {
+    background: rgba(255, 45, 175, 0.08) !important;
+    color: var(--accent-tech) !important;
+}
+.metric-icon[style*="179, 0"] {
+    background: rgba(168, 85, 247, 0.1) !important;
+    color: var(--accent-violet) !important;
+}
+.metric-icon[style*="255, 20"] {
+    background: rgba(57, 197, 255, 0.08) !important;
+    color: var(--accent-safe) !important;
+}
+.metric-info h3[style*="#ffffff"] {
+    color: var(--text-primary) !important;
+}
+.metric-info h3[style*="#39ff14"] {
+    color: var(--accent-safe) !important;
+    text-shadow: 0 0 8px rgba(57, 197, 255, 0.4) !important;
+}
+.metric-info p[style] {
+    color: var(--text-secondary) !important;
+}
+.metric-card[onclick] {
+    --js-hover-color: #39c5ff;
+}
+
+/* ------------------------------------------------------------
+   [5] CHAT HEADER / MENSAJE DE SISTEMA inline
+   ------------------------------------------------------------ */
+.chat-header h3[style] {
+    color: var(--accent-tech) !important;
+}
+.chat-header small[style] {
+    color: var(--text-secondary) !important;
+}
+.msg.system[style] {
+    border-left: 2px solid var(--accent-tech) !important;
+    color: var(--text-secondary) !important;
+}
+
+/* ------------------------------------------------------------
+   [6] FIX RESPONSIVE DEL TOPBAR — lo que se veia "raro" en movil.
+   El menu horizontal se corta abrupto sin avisar que hay mas
+   tabs, y en pantallas angostas el avatar+nombre+badges chocan
+   con los tabs. Esto agrega scroll suave + fade lateral +
+   reflow por breakpoint.
+   ------------------------------------------------------------ */
+.sidebar-public {
+    position: relative;
+}
+.sidebar-public::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 28px;
+    background: linear-gradient(90deg, transparent 0%, rgba(10, 4, 16, 0.9) 100%);
+    pointer-events: none;
+    z-index: 60;
+}
+@media screen and (max-width: 900px) {
+    .sidebar-public {
+        flex-wrap: wrap;
+        height: auto;
+        min-height: var(--topbar-height);
+        padding: 0.6rem 1rem;
+        row-gap: 0.5rem;
+    }
+    .portfolio-layout {
+        grid-template-rows: auto 1fr;
+    }
+    .profile-summary {
+        width: 100%;
+        justify-content: flex-start;
+    }
+    .profile-summary p {
+        display: inline-block !important;
+    }
+    .sidebar-menu {
+        width: 100%;
+        justify-content: flex-start;
+        mask-image: linear-gradient(90deg, #000 92%, transparent 100%);
+        -webkit-mask-image: linear-gradient(90deg, #000 92%, transparent 100%);
+    }
+    .sidebar-public::before {
+        display: none;
+    }
+    .topbar-actions {
+        display: none;
+    }
+}
+@media screen and (max-width: 640px) {
+    .sidebar-menu button {
+        padding: 0.4rem 0.7rem !important;
+        font-size: 0.7rem !important;
+    }
+    .profile-summary h2 {
+        font-size: 0.8rem !important;
+    }
+    .profile-summary p {
+        font-size: 0.62rem !important;
+    }
+    .cyber-hero .hero-text[style] {
+        max-width: 100% !important;
+    }
+    .cyber-hero h1 {
+        font-size: 1.5rem !important;
+    }
+    .bot-hero-sentinel {
+        width: 60px !important;
+        height: 60px !important;
+        opacity: 0.35 !important;
+    }
+    .cyber-grid[style] {
+        grid-template-columns: 1fr !important;
+    }
+}
