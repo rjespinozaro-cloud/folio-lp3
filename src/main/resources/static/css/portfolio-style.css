@@ -1,27 +1,34 @@
-/* portfolio.css - Ronaldino Joanlu Espinoza Rosario - SOC Terminal Edition */
+/* portfolio.css - Ronaldino Joanlu Espinoza Rosario - PURPLE TEAM OPERATOR EDITION */
 /* ============================================================
-   [1] CONFIGURACION GLOBAL Y VARIABLES DE DISENO (SOC TERMINAL EDITION)
+   [1] CONFIGURACION GLOBAL Y VARIABLES DE DISENO (PURPLE TEAM EDITION)
+   Paleta: rosa neon (ataque / red-team) + violeta (purple-team) +
+   azul electrico (defensa / blue-team) sobre fondo casi negro.
    ============================================================ */
 :root {
-    --bg-main: #0a0f0d;
-    --bg-surface: rgba(15, 30, 26, 0.55);
-    --bg-surface-elevated: rgba(20, 40, 35, 0.85);
-    --text-primary: #cfe4dc;
-    --text-secondary: #8fb3a8;
-    --text-muted: #5f8a7d;
-    --text-dark: #06120d;
-    --accent-safe: #34d399;
-    --accent-tech: #22d3c7;
-    --accent-warning: #d4a843;
-    --accent-error: #f87171;
-    --accent-secondary: #3ba9b0;
-    --border-color: rgba(45, 212, 191, 0.16);
-    --border-glow: rgba(45, 212, 191, 0.34);
+    --bg-main: #0b0512;
+    --bg-void: #050208;
+    --bg-surface: rgba(38, 12, 52, 0.55);
+    --bg-surface-elevated: rgba(55, 15, 72, 0.85);
+    --text-primary: #f0e6fa;
+    --text-secondary: #c9a8e0;
+    --text-muted: #9a72c0;
+    --text-dark: #170a22;
+    --accent-safe: #39c5ff;
+    --accent-tech: #ff2da8;
+    --accent-violet: #a855f7;
+    --accent-warning: #ff6a3d;
+    --accent-error: #ff3d68;
+    --accent-secondary: #8b2fc9;
+    --border-color: rgba(199, 60, 235, 0.18);
+    --border-glow: rgba(199, 60, 235, 0.34);
+    --neon-gradient: linear-gradient(90deg, #ff2da8 0%, #c026d3 45%, #7c3aed 100%);
+    --neon-gradient-soft: linear-gradient(135deg, rgba(255, 45, 175, 0.16) 0%, rgba(124, 58, 237, 0.16) 100%);
     --font-stack: 'SF Pro Display', -apple-system, 'Segoe UI', Roboto, Helvetica, sans-serif;
     --font-mono: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
     --glass-blur: blur(12px);
     --sidebar-width: 280px;
     --chat-width: 350px;
+    --topbar-height: 76px;
     --main-padding: 2.5rem;
     --main-gap: 1.5rem;
     --card-radius: 14px;
@@ -44,8 +51,11 @@ body {
     font-family: var(--font-stack);
     line-height: 1.5;
     background-image:
-        repeating-linear-gradient(90deg, rgba(45, 212, 191, 0.025) 0px, rgba(45, 212, 191, 0.025) 1px, transparent 1px, transparent 4px),
-        radial-gradient(circle at 50% 30%, rgba(45, 212, 191, 0.06), transparent 70%);
+        repeating-linear-gradient(90deg, rgba(199, 60, 235, 0.025) 0px, rgba(199, 60, 235, 0.025) 1px, transparent 1px, transparent 4px),
+        repeating-linear-gradient(0deg, rgba(168, 85, 247, 0.02) 0px, rgba(168, 85, 247, 0.02) 1px, transparent 1px, transparent 4px),
+        radial-gradient(circle at 15% 10%, rgba(255, 45, 175, 0.09), transparent 45%),
+        radial-gradient(circle at 85% 90%, rgba(139, 47, 201, 0.1), transparent 45%),
+        radial-gradient(circle at 50% 30%, rgba(199, 60, 235, 0.05), transparent 70%);
     background-attachment: fixed;
     overflow-x: hidden;
 }
@@ -59,11 +69,11 @@ body {
     height: 6px;
 }
 ::-webkit-scrollbar-track {
-    background: rgba(10, 15, 13, 0.9);
+    background: rgba(18, 8, 26, 0.9);
     border-radius: var(--card-radius-sm);
 }
 ::-webkit-scrollbar-thumb {
-    background: rgba(45, 212, 191, 0.25);
+    background: rgba(199, 60, 235, 0.25);
     border-radius: 10px;
     transition: var(--transition-standard);
 }
@@ -72,122 +82,197 @@ body {
     box-shadow: 0 0 10px var(--accent-tech);
 }
 /* ============================================================
-   [2] LAYOUT DE TRES COLUMNAS PRINCIPAL (DESKTOP)
+   [2] LAYOUT PRINCIPAL: TOPBAR HORIZONTAL + CONTENIDO + CHAT
+   El menu ya no vive en un sidebar lateral: ahora es una barra
+   superior tipo "operations console" (Dashboard / Red Team / Blue Team)
+   inspirada en dashboards SOC de Purple Team.
    ============================================================ */
 .portfolio-layout {
     display: grid;
-    grid-template-columns: var(--sidebar-width) 1fr var(--chat-width);
+    grid-template-columns: 1fr var(--chat-width);
+    grid-template-rows: var(--topbar-height) 1fr;
     height: 100vh;
     width: 100vw;
     gap: 0;
     overflow: hidden;
+    background: var(--bg-void);
 }
 .sidebar-public {
-    background: linear-gradient(180deg, rgba(10, 18, 16, 0.95) 0%, rgba(6, 10, 9, 0.98) 100%);
+    grid-column: 1 / -1;
+    grid-row: 1;
+    background: linear-gradient(180deg, rgba(20, 8, 30, 0.97) 0%, rgba(10, 4, 16, 0.99) 100%);
     backdrop-filter: var(--glass-blur);
     -webkit-backdrop-filter: var(--glass-blur);
-    border-right: 1px solid var(--border-color);
-    border-radius: 0 var(--card-radius-lg) var(--card-radius-lg) 0;
+    border-right: none;
+    border-bottom: 1px solid var(--border-color);
+    border-radius: 0 0 var(--card-radius-lg) var(--card-radius-lg);
     display: flex;
-    flex-direction: column;
-    padding: 2rem 1.25rem;
-    gap: 2.5rem;
-    overflow-y: auto;
-    overflow-x: hidden;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 1.75rem;
+    gap: 1.5rem;
+    overflow-y: visible;
+    overflow-x: auto;
+    position: relative;
+    z-index: 50;
+}
+.sidebar-public::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -1px;
+    height: 2px;
+    background: var(--neon-gradient);
+    opacity: 0.55;
+    filter: blur(0.5px);
 }
 .profile-summary {
-    text-align: center;
+    text-align: left;
     animation: fadeIn 0.6s ease-out;
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    flex-shrink: 0;
 }
 .profile-summary .avatar {
-    width: 110px;
-    height: 110px;
+    width: 46px;
+    height: 46px;
     border-radius: 50%;
     border: 2px solid var(--accent-tech);
-    box-shadow: 0 0 16px rgba(34, 211, 199, 0.22);
-    margin-bottom: 1rem;
+    box-shadow: 0 0 14px rgba(255, 45, 175, 0.4);
+    margin-bottom: 0;
     object-fit: cover;
     transition: var(--transition-standard);
 }
 .profile-summary .avatar:hover {
-    transform: scale(1.04);
-    box-shadow: 0 0 22px rgba(34, 211, 199, 0.32);
+    transform: scale(1.08);
+    box-shadow: 0 0 22px rgba(255, 45, 175, 0.55);
 }
 .profile-summary h2 {
-    font-size: 1.3rem;
+    font-size: 1rem;
     font-weight: 700;
-    letter-spacing: -0.02em;
-    margin-bottom: 0.35rem;
+    letter-spacing: -0.01em;
+    margin-bottom: 0.1rem;
     color: var(--text-primary);
+    white-space: nowrap;
 }
 .profile-summary p {
     color: var(--accent-tech);
-    font-size: 0.8rem;
+    font-size: 0.68rem;
     font-family: var(--font-mono);
     text-transform: uppercase;
     letter-spacing: 1px;
+    white-space: nowrap;
 }
 .sidebar-menu {
     display: flex;
-    flex-direction: column;
-    gap: 0.6rem;
-    overflow-y: auto;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.4rem;
+    overflow-x: auto;
+    overflow-y: hidden;
+    flex: 1;
+    justify-content: center;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+}
+.sidebar-menu::-webkit-scrollbar {
+    display: none;
 }
 .sidebar-menu button {
-    background: rgba(45, 212, 191, 0.03);
-    border: 1px solid rgba(45, 212, 191, 0.1);
-    border-radius: var(--card-radius);
+    background: rgba(199, 60, 235, 0.04);
+    border: 1px solid rgba(199, 60, 235, 0.12);
+    border-radius: 999px;
     color: var(--text-secondary);
     text-align: left;
-    padding: 0.85rem 1.1rem;
-    font-size: 0.9rem;
+    padding: 0.55rem 1.1rem;
+    font-size: 0.82rem;
     cursor: pointer;
     transition: var(--transition-standard);
     display: flex;
     align-items: center;
-    gap: 0.75rem;
+    gap: 0.55rem;
     font-family: var(--font-stack);
     position: relative;
     overflow: hidden;
+    white-space: nowrap;
+    flex-shrink: 0;
 }
 .sidebar-menu button::before {
     content: '';
     position: absolute;
-    left: 0;
-    top: 0;
-    height: 100%;
-    width: 3px;
-    background: var(--accent-tech);
-    border-radius: 0 4px 4px 0;
-    transform: scaleY(0);
-    transition: transform 0.25s ease;
+    left: 50%;
+    bottom: 0;
+    height: 2px;
+    width: 0%;
+    background: var(--neon-gradient);
+    border-radius: 4px 4px 0 0;
+    transform: translateX(-50%);
+    transition: width 0.25s ease;
 }
 .sidebar-menu button:hover {
-    background: linear-gradient(90deg, rgba(45, 212, 191, 0.09) 0%, transparent 100%);
+    background: linear-gradient(180deg, rgba(199, 60, 235, 0.14) 0%, rgba(199, 60, 235, 0.03) 100%);
     color: var(--text-primary);
-    padding-left: 1.35rem;
-    border-color: rgba(45, 212, 191, 0.25);
+    border-color: rgba(199, 60, 235, 0.35);
+    transform: translateY(-1px);
 }
 .sidebar-menu button:hover::before {
-    transform: scaleY(1);
+    width: 70%;
 }
 .sidebar-menu button:active {
     transform: scale(0.97);
 }
 .sidebar-menu button.active {
-    background: linear-gradient(90deg, rgba(45, 212, 191, 0.16) 0%, rgba(45, 212, 191, 0.03) 100%) !important;
-    color: var(--text-primary) !important;
-    border: 1px solid rgba(34, 211, 199, 0.4) !important;
-    font-weight: 600;
+    background: linear-gradient(135deg, rgba(255, 45, 175, 0.22) 0%, rgba(124, 58, 237, 0.18) 100%) !important;
+    color: #ffffff !important;
+    border: 1px solid rgba(255, 45, 175, 0.55) !important;
+    font-weight: 700;
+    box-shadow: 0 0 16px rgba(255, 45, 175, 0.28), inset 0 0 12px rgba(255, 45, 175, 0.08);
+    text-shadow: 0 0 10px rgba(255, 45, 175, 0.6);
+}
+.sidebar-menu button.active::before {
+    width: 85%;
 }
 .sidebar-menu button.active::after {
-    content: "\25C0";
-    font-size: 0.6rem;
-    color: var(--accent-tech);
-    margin-left: auto;
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent-tech);
+    box-shadow: 0 0 8px var(--accent-tech);
+    margin-left: 0.15rem;
     animation: pulse 1.5s infinite;
 }
+.topbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    flex-shrink: 0;
+}
+.topbar-actions button, .topbar-actions .icon-btn {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(199, 60, 235, 0.06);
+    border: 1px solid rgba(199, 60, 235, 0.2);
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: var(--transition-standard);
+}
+.topbar-actions button:hover, .topbar-actions .icon-btn:hover {
+    color: #ffffff;
+    border-color: var(--accent-tech);
+    box-shadow: 0 0 12px rgba(255, 45, 175, 0.4);
+    transform: translateY(-2px);
+}
 .main-viewport {
+    grid-column: 1;
+    grid-row: 2;
     padding: var(--main-padding);
     overflow-y: auto;
     overflow-x: hidden;
@@ -199,20 +284,22 @@ body {
     animation: fadeIn 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 .ia-chat-panel {
-    background: linear-gradient(180deg, rgba(10, 18, 16, 0.95) 0%, rgba(6, 10, 9, 0.98) 100%);
+    grid-column: 2;
+    grid-row: 2;
+    background: linear-gradient(180deg, rgba(20, 8, 30, 0.95) 0%, rgba(12, 6, 18, 0.98) 100%);
     backdrop-filter: var(--glass-blur);
     -webkit-backdrop-filter: var(--glass-blur);
     border-left: 1px solid var(--border-color);
     border-radius: var(--card-radius-lg) 0 0 var(--card-radius-lg);
     display: flex;
     flex-direction: column;
-    height: 100vh;
+    height: 100%;
     overflow: hidden;
 }
 .chat-header {
     padding: 1.5rem;
     border-bottom: 1px solid var(--border-color);
-    background: linear-gradient(180deg, rgba(45, 212, 191, 0.05) 0%, transparent 100%);
+    background: linear-gradient(180deg, rgba(199, 60, 235, 0.05) 0%, transparent 100%);
     flex-shrink: 0;
 }
 .chat-header h3 {
@@ -248,9 +335,9 @@ body {
     animation: slideInRight 0.25s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 .msg.system {
-    background: rgba(45, 212, 191, 0.04);
+    background: rgba(199, 60, 235, 0.04);
     color: var(--text-secondary);
-    border: 1px solid rgba(45, 212, 191, 0.16);
+    border: 1px solid rgba(199, 60, 235, 0.16);
     align-self: center;
     text-align: center;
     max-width: 90%;
@@ -258,14 +345,14 @@ body {
     font-family: var(--font-mono);
 }
 .msg.user {
-    background: linear-gradient(135deg, #0f766e 0%, #115e59 100%);
+    background: linear-gradient(135deg, #a21caf 0%, #581c87 100%);
     color: var(--text-primary);
     align-self: flex-end;
     border-bottom-right-radius: 4px;
-    box-shadow: 0 4px 14px rgba(15, 118, 110, 0.25);
+    box-shadow: 0 4px 14px rgba(162, 28, 175, 0.25);
 }
 .msg.assistant {
-    background: linear-gradient(135deg, var(--bg-surface-elevated) 0%, rgba(12, 22, 20, 0.9) 100%);
+    background: linear-gradient(135deg, var(--bg-surface-elevated) 0%, rgba(26, 10, 36, 0.9) 100%);
     color: var(--text-primary);
     align-self: flex-start;
     border-bottom-left-radius: 4px;
@@ -273,9 +360,9 @@ body {
     box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
 }
 .msg.error {
-    background: rgba(248, 113, 113, 0.08);
+    background: rgba(255, 61, 104, 0.08);
     color: var(--accent-error);
-    border: 1px solid rgba(248, 113, 113, 0.22);
+    border: 1px solid rgba(255, 61, 104, 0.22);
     align-self: center;
     font-family: var(--font-mono);
 }
@@ -284,7 +371,7 @@ body {
     border-top: 1px solid var(--border-color);
     display: flex;
     gap: 0.6rem;
-    background: rgba(6, 10, 9, 0.95);
+    background: rgba(12, 6, 18, 0.95);
     flex-shrink: 0;
 }
 .chat-input-area input {
@@ -300,10 +387,10 @@ body {
 }
 .chat-input-area input:focus {
     border-color: var(--accent-tech);
-    box-shadow: 0 0 10px rgba(34, 211, 199, 0.22);
+    box-shadow: 0 0 10px rgba(255, 45, 175, 0.22);
 }
 .chat-input-area button {
-    background: linear-gradient(135deg, var(--bg-surface-elevated) 0%, rgba(20, 40, 35, 0.5) 100%);
+    background: linear-gradient(135deg, var(--bg-surface-elevated) 0%, rgba(55, 15, 72, 0.5) 100%);
     color: var(--text-primary);
     border: 1px solid var(--border-color);
     border-radius: var(--card-radius);
@@ -320,7 +407,7 @@ body {
     background: linear-gradient(135deg, var(--accent-tech) 0%, var(--accent-safe) 100%);
     color: var(--text-dark);
     border-color: var(--accent-tech);
-    box-shadow: 0 0 12px rgba(34, 211, 199, 0.35);
+    box-shadow: 0 0 12px rgba(255, 45, 175, 0.35);
 }
 .chat-input-area button:active {
     transform: scale(0.95);
@@ -354,7 +441,7 @@ body {
     gap: var(--main-gap);
 }
 .cyber-grid > div, .skills-grid > div, .contacto-card {
-    background: linear-gradient(135deg, var(--bg-surface) 0%, rgba(6, 10, 9, 0.8) 100%);
+    background: linear-gradient(135deg, var(--bg-surface) 0%, rgba(12, 6, 18, 0.8) 100%);
     backdrop-filter: var(--glass-blur);
     -webkit-backdrop-filter: var(--glass-blur);
     border: 1px solid var(--border-color);
@@ -366,7 +453,7 @@ body {
 }
 .cyber-grid > div:hover, .skills-grid > div:hover, .contacto-card:hover {
     border-color: var(--accent-tech);
-    box-shadow: 0 10px 26px rgba(45, 212, 191, 0.1);
+    box-shadow: 0 10px 26px rgba(199, 60, 235, 0.1);
     transform: translateY(-4px);
 }
 .cyber-grid > div:active, .skills-grid > div:active, .contacto-card:active {
@@ -385,13 +472,17 @@ body {
     animation: fadeIn 0.8s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 .cyber-hero h1 {
-    font-size: 3rem;
+    font-size: 3.1rem;
     font-weight: 800;
     letter-spacing: -0.04em;
     margin-bottom: 0.35rem;
     line-height: 1.1;
-    color: var(--text-primary);
-    text-shadow: 0 0 18px rgba(34, 211, 199, 0.22);
+    background: linear-gradient(90deg, #ffffff 0%, #ff2da8 45%, #a855f7 75%, #7c3aed 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    filter: drop-shadow(0 0 18px rgba(255, 45, 175, 0.35)) drop-shadow(0 0 32px rgba(124, 58, 237, 0.22));
+    animation: neonFlicker 6s ease-in-out infinite;
 }
 .glitch-text {
     color: var(--accent-tech);
@@ -400,8 +491,20 @@ body {
     font-weight: 700;
     margin-bottom: 1.5rem;
     text-transform: uppercase;
-    letter-spacing: 0.1em;
-    text-shadow: 0 0 10px rgba(34, 211, 199, 0.28);
+    letter-spacing: 0.15em;
+    text-shadow: 0 0 10px rgba(255, 45, 175, 0.5), 0 0 22px rgba(168, 85, 247, 0.3);
+    position: relative;
+    display: inline-block;
+}
+.glitch-text::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -6px;
+    width: 46px;
+    height: 2px;
+    background: var(--neon-gradient);
+    box-shadow: 0 0 8px rgba(255, 45, 175, 0.6);
 }
 .hero-bio {
     color: var(--text-secondary);
@@ -416,7 +519,7 @@ body {
     gap: 0.6rem;
 }
 .tech-badges .badge {
-    background: rgba(45, 212, 191, 0.04);
+    background: rgba(199, 60, 235, 0.04);
     border: 1px solid var(--border-color);
     border-radius: var(--card-radius-sm);
     color: var(--text-secondary);
@@ -429,8 +532,8 @@ body {
 .tech-badges .badge:hover {
     border-color: var(--accent-tech);
     color: var(--text-primary);
-    background: rgba(45, 212, 191, 0.12);
-    box-shadow: 0 0 8px rgba(34, 211, 199, 0.18);
+    background: rgba(199, 60, 235, 0.12);
+    box-shadow: 0 0 8px rgba(255, 45, 175, 0.18);
 }
 .telemetry-grid {
     display: grid;
@@ -440,7 +543,7 @@ body {
     position: relative;
 }
 .metric-card {
-    background: linear-gradient(135deg, var(--bg-surface) 0%, rgba(8, 18, 16, 0.7) 100%);
+    background: linear-gradient(135deg, var(--bg-surface) 0%, rgba(20, 8, 30, 0.7) 100%);
     backdrop-filter: var(--glass-blur);
     -webkit-backdrop-filter: var(--glass-blur);
     border: 1px solid var(--border-color);
@@ -453,13 +556,13 @@ body {
 }
 .metric-card:hover {
     border-color: var(--accent-tech);
-    box-shadow: 0 8px 22px rgba(45, 212, 191, 0.1);
+    box-shadow: 0 8px 22px rgba(199, 60, 235, 0.1);
     transform: translateY(-3px);
 }
 .metric-icon {
     font-size: 2.2rem;
     background-color: var(--bg-surface-elevated);
-    border: 1px solid rgba(45, 212, 191, 0.16);
+    border: 1px solid rgba(199, 60, 235, 0.16);
     border-radius: var(--card-radius);
     padding: 0.75rem;
     width: 64px;
@@ -473,7 +576,7 @@ body {
 .metric-card:hover .metric-icon {
     color: var(--accent-tech);
     border-color: var(--accent-tech);
-    box-shadow: 0 0 12px rgba(34, 211, 199, 0.2);
+    box-shadow: 0 0 12px rgba(255, 45, 175, 0.2);
 }
 .metric-info h3 {
     font-size: 1.95rem;
@@ -495,7 +598,7 @@ body {
     gap: 1.5rem;
 }
 .roadmap-column, .roadmap-columna {
-    background: linear-gradient(180deg, rgba(15, 30, 26, 0.4) 0%, rgba(6, 10, 9, 0.7) 100%);
+    background: linear-gradient(180deg, rgba(38, 12, 52, 0.4) 0%, rgba(12, 6, 18, 0.7) 100%);
     backdrop-filter: var(--glass-blur);
     border: 1px dashed var(--border-color);
     border-radius: var(--card-radius);
@@ -505,7 +608,7 @@ body {
 .roadmap-column:hover, .roadmap-columna:hover {
     border-style: solid;
     border-color: var(--accent-tech);
-    box-shadow: 0 5px 18px rgba(45, 212, 191, 0.08);
+    box-shadow: 0 5px 18px rgba(199, 60, 235, 0.08);
 }
 .roadmap-column h3, .roadmap-columna h3 {
     font-size: 0.9rem;
@@ -568,17 +671,17 @@ body {
 .segment-block {
     flex: 1;
     height: 8px;
-    background: rgba(45, 212, 191, 0.08);
+    background: rgba(199, 60, 235, 0.08);
     border-radius: 4px;
     transition: var(--transition-standard);
 }
 .segment-block.active {
     background: linear-gradient(90deg, var(--accent-safe) 0%, var(--accent-tech) 100%);
-    box-shadow: 0 0 8px rgba(34, 211, 199, 0.28);
+    box-shadow: 0 0 8px rgba(255, 45, 175, 0.28);
 }
 .certificaciones-vault {
-    background: #0b1210;
-    border: 1px solid #1a2b27;
+    background: #150a1f;
+    border: 1px solid #3d1a52;
     border-radius: var(--card-radius-lg);
     padding: 2.2rem;
     position: relative;
@@ -604,9 +707,9 @@ body {
     opacity: 1;
     filter: drop-shadow(0 0 10px var(--bot-glow, var(--accent-tech)));
 }
-.card-blue-accent  { --bot-glow: #3ba9b0; }
-.card-green-accent { --bot-glow: #34d399; }
-.card-amber-accent { --bot-glow: #d4a843; }
+.card-blue-accent  { --bot-glow: #8b2fc9; }
+.card-green-accent { --bot-glow: #39c5ff; }
+.card-amber-accent { --bot-glow: #ff6a3d; }
 .robot-edge-hugger {
     position: absolute;
     width: 60px;
@@ -614,7 +717,7 @@ body {
     opacity: 0.8;
     z-index: 1;
     pointer-events: none;
-    filter: drop-shadow(0 0 6px rgba(34, 211, 199, 0.14));
+    filter: drop-shadow(0 0 6px rgba(255, 45, 175, 0.14));
     transition: all 0.3s ease;
 }
 .hugger-top {
@@ -641,6 +744,15 @@ body {
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(8px); }
     to { opacity: 1; transform: translateY(0); }
+}
+@keyframes neonFlicker {
+    0%, 92%, 100% { filter: drop-shadow(0 0 18px rgba(255, 45, 175, 0.35)) drop-shadow(0 0 32px rgba(124, 58, 237, 0.22)); }
+    94% { filter: drop-shadow(0 0 8px rgba(255, 45, 175, 0.18)) drop-shadow(0 0 14px rgba(124, 58, 237, 0.1)); }
+    96% { filter: drop-shadow(0 0 24px rgba(255, 45, 175, 0.45)) drop-shadow(0 0 40px rgba(124, 58, 237, 0.3)); }
+}
+@keyframes borderGlowPulse {
+    0%, 100% { box-shadow: 0 0 0 rgba(255, 45, 175, 0); }
+    50% { box-shadow: 0 0 18px rgba(255, 45, 175, 0.18); }
 }
 @keyframes slideInLeft {
     from { opacity: 0; transform: translateX(-20px); }
@@ -692,14 +804,15 @@ body {
    ============================================================ */
 @media screen and (max-width: 1200px) {
     :root {
-        --sidebar-width: 250px;
         --chat-width: 310px;
         --main-padding: 2rem;
         --card-radius: 12px;
+        --topbar-height: 70px;
     }
     .portfolio-layout {
-        grid-template-columns: var(--sidebar-width) 1fr var(--chat-width);
+        grid-template-columns: 1fr var(--chat-width);
     }
+    .sidebar-menu button { padding: 0.5rem 0.9rem; font-size: 0.78rem; }
     .cyber-grid, .skills-grid {
         grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
     }
@@ -713,37 +826,37 @@ body {
 }
 @media screen and (max-width: 1024px) {
     :root {
-        --sidebar-width: 210px;
         --chat-width: 100%;
         --main-padding: 1.75rem;
+        --topbar-height: 66px;
     }
     body {
         height: auto;
         overflow-y: auto;
     }
     .portfolio-layout {
-        grid-template-columns: var(--sidebar-width) 1fr;
-        grid-template-rows: auto auto;
+        grid-template-columns: 1fr;
+        grid-template-rows: var(--topbar-height) auto auto;
         height: auto;
         min-height: 100vh;
     }
-    .main-viewport {
-        grid-column: 2;
+    .sidebar-public {
+        grid-column: 1;
         grid-row: 1;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        border-radius: 0 0 var(--card-radius-lg) var(--card-radius-lg);
+    }
+    .main-viewport {
+        grid-column: 1;
+        grid-row: 2;
         padding: var(--main-padding);
         overflow-y: visible;
     }
-    .sidebar-public {
-        grid-column: 1;
-        grid-row: 1 / 3;
-        height: 100vh;
-        position: sticky;
-        top: 0;
-        border-radius: 0;
-    }
     .ia-chat-panel {
-        grid-column: 2;
-        grid-row: 2;
+        grid-column: 1;
+        grid-row: 3;
         height: 500px;
         border-left: none;
         border-top: 1px solid var(--border-color);
@@ -764,72 +877,47 @@ body {
 @media screen and (max-width: 768px) {
     :root {
         --main-padding: 1.5rem;
+        --topbar-height: 60px;
     }
     .portfolio-layout {
-        display: flex;
-        flex-direction: column;
+        grid-template-rows: var(--topbar-height) auto auto;
         height: auto;
         min-height: 100vh;
         overflow-y: auto;
     }
     .sidebar-public {
         width: 100%;
-        height: auto;
-        border-right: none;
-        border-bottom: 1px solid var(--border-color);
-        border-radius: 0 0 var(--card-radius-lg) var(--card-radius-lg);
-        padding: 1.1rem var(--main-padding);
-        gap: 1.25rem;
-        position: sticky;
-        top: 0;
-        z-index: 100;
-        background: rgba(6, 10, 9, 0.96);
+        padding: 0.6rem var(--main-padding);
+        gap: 0.85rem;
+        background: rgba(10, 4, 16, 0.97);
     }
     .profile-summary {
-        display: flex;
-        align-items: center;
-        text-align: left;
-        gap: 1rem;
+        gap: 0.6rem;
     }
     .profile-summary .avatar {
-        width: 54px;
-        height: 54px;
+        width: 36px;
+        height: 36px;
         margin-bottom: 0;
     }
     .profile-summary h2 {
-        font-size: 1.1rem;
-        margin-bottom: 0.1rem;
+        font-size: 0.85rem;
+        margin-bottom: 0;
     }
     .profile-summary p {
-        font-size: 0.72rem;
-    }
-    .sidebar-menu {
-        flex-direction: row;
-        gap: 0.5rem;
-        overflow-x: auto;
-        overflow-y: hidden;
-        -webkit-overflow-scrolling: touch;
-        padding-bottom: 0.35rem;
-        width: 100%;
-    }
-    .sidebar-menu button {
-        white-space: nowrap;
-        padding: 0.6rem 1rem;
-        font-size: 0.8rem;
-        flex-shrink: 0;
-        border-radius: var(--card-radius-sm);
-    }
-    .sidebar-menu button::before, .sidebar-menu button.active::after {
         display: none;
     }
-    .sidebar-menu button:hover {
-        padding-left: 1rem;
-        background: rgba(45, 212, 191, 0.08);
+    .sidebar-menu {
+        gap: 0.35rem;
+        padding-bottom: 0.1rem;
     }
-    .sidebar-menu button.active {
-        background: var(--accent-safe) !important;
-        color: var(--text-dark) !important;
-        border-color: var(--accent-tech) !important;
+    .sidebar-menu button {
+        padding: 0.45rem 0.8rem;
+        font-size: 0.74rem;
+        border-radius: 999px;
+    }
+    .topbar-actions button, .topbar-actions .icon-btn {
+        width: 32px;
+        height: 32px;
     }
     .main-viewport {
         padding: var(--main-padding);
@@ -1004,16 +1092,16 @@ body {
    [8] PLUS: ACCESIBILIDAD AVANZADA, ULTRA-WIDE Y EDGE CASES
    ============================================================ */
 ::selection {
-    background: rgba(34, 211, 199, 0.35);
+    background: rgba(255, 45, 175, 0.35);
     color: var(--text-primary);
 }
 html {
     scrollbar-width: thin;
-    scrollbar-color: rgba(45, 212, 191, 0.3) rgba(10, 15, 13, 0.9);
+    scrollbar-color: rgba(199, 60, 235, 0.3) rgba(18, 8, 26, 0.9);
 }
 @media (hover: none) and (pointer: coarse) {
     .sidebar-menu button:hover {
-        padding-left: 1.1rem;
+        transform: none;
     }
     .cyber-grid > div:hover, .skills-grid > div:hover, .contacto-card:hover {
         transform: none;
@@ -1030,7 +1118,6 @@ html {
 }
 @media screen and (min-width: 1440px) {
     :root {
-        --sidebar-width: 300px;
         --chat-width: 380px;
         --main-padding: 3rem;
     }
@@ -1047,13 +1134,8 @@ html {
     .section-header h2 { font-size: 2rem; }
 }
 @media screen and (min-width: 1025px) and (max-height: 700px) {
-    .sidebar-public {
-        padding: 1.25rem 1.1rem;
-        gap: 1.5rem;
-    }
-    .profile-summary .avatar {
-        width: 80px;
-        height: 80px;
+    :root {
+        --topbar-height: 64px;
     }
     .chat-box {
         padding: 0.9rem;
@@ -1068,9 +1150,9 @@ html {
 }
 @media (prefers-contrast: more) {
     :root {
-        --border-color: rgba(45, 212, 191, 0.4);
-        --text-secondary: #b6d6cc;
-        --text-muted: #7fae9f;
+        --border-color: rgba(199, 60, 235, 0.4);
+        --text-secondary: #e0c8f0;
+        --text-muted: #b598cf;
     }
     .sidebar-menu button, .cyber-grid > div, .skills-grid > div, .contacto-card {
         border-width: 2px;
@@ -1102,9 +1184,10 @@ html {
 .metric-card, .roadmap-column, .roadmap-columna, .certificaciones-vault, .msg, .tech-badges .badge {
     -webkit-tap-highlight-color: transparent;
 }
-/* Fuerza el color blanco roto premium en el nombre para mantener la armonía SOC */
+/* Fuerza el blanco premium en el nombre para mantener la armonia Purple Team */
 .profile-summary h2 {
-    color: #f3f4f6 !important;
+    color: #f5eefc !important;
+    text-shadow: 0 0 12px rgba(255, 45, 175, 0.35);
 }
 /* ==========================================
    Estructura Interna de la Tarjeta de Perfil
@@ -1130,9 +1213,15 @@ html {
     object-fit: cover; /* Recorta la imagen proporcionalmente sin deformarla */
     object-position: center top; /* Enfoca el encuadre en el rostro */
     border-radius: 6px;
-    border: 1px solid rgba(59, 130, 246, 0.4); /* Borde sutil azul operativo */
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
-    background-color: #0b0f19;
+    border: 1px solid rgba(255, 45, 175, 0.45); /* Borde neon rosa operativo */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5), 0 0 14px rgba(168, 85, 247, 0.18);
+    background-color: #12081c;
+    transition: var(--transition-standard);
+}
+.profile-photo-native:hover {
+    border-color: rgba(255, 45, 175, 0.8);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.55), 0 0 22px rgba(255, 45, 175, 0.4);
+    transform: translateY(-2px);
 }
 
 .profile-text-wrapper {
