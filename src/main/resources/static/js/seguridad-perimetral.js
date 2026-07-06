@@ -174,53 +174,107 @@ async function inicializarModuloSeguridad(token) {
 
     // ── 3. CARGAR AUDITORÍA DE DISPOSITIVOS (CAMELCASE) ─────────────────────────
     async function cargarDispositivos() {
-        const grid = document.getElementById("sessions-hardware-grid");
-        const tablaHardware = document.getElementById("hardware-sessions-table-body");
-        if (!grid || !tablaHardware) return;
+    const grid = document.getElementById("sessions-hardware-grid");
+    const tablaHardware = document.getElementById("hardware-sessions-table-body");
+    if (!grid || !tablaHardware) return;
 
-        try {
-            const res = await fetch(`${API_BASE}/active-sessions`, { headers });
-            const datos = await res.json();
+    try {
+        const res = await fetch(`${API_BASE}/active-sessions`, { headers });
+        let datos = await res.json();
+        if (!Array.isArray(datos)) datos = [];
+        
+        // ──> 1. INTERCEPCIÓN EN TIEMPO REAL DESDE EL FLUJO SIEM
+        if (window.ipsActivasSiem && window.ipsActivasSiem.length) {
+            window.ipsActivasSiem.forEach((ip, index) => {
+                // Verificamos si la IP ya tiene un rol registrado como tráfico detectado
+                const yaExisteVirtual = datos.some(d => (d.ipOrigen || d.ip_origen) === ip && d.dispositivo === "AGENT_DETECTED_TRAFFIC");
+                
+                if (!yaExisteVirtual) {
+                    datos.push({
+                        // Generamos un ID volátil único por iteración para que no colisionen
+                        id: `siem-virtual-${index}-${Math.random().toString(36).substr(2, 5)}`,
+                        dispositivo: "AGENT_DETECTED_TRAFFIC",
+                        usuarioEmail: "Intercepción SIEM",
+                        ipOrigen: ip,
+                        lugar: "Análisis Perimetral",
+                        tipoDispositivo: "NETWORK_NODE",
+                        ultimaConexion: new Date().toISOString(),
+                        activa: true
+                    });
+                }
+            });
+        }
+        
+        if (!datos.length) {
+            grid.innerHTML = `<div class="sec-log-empty">✓ No se registran terminales concurrentes.</div>`;
+            tablaHardware.innerHTML = `<tr><td colspan="5" class="sec-text-center">0 terminales mapeadas.</td></tr>`;
+            return;
+        }
+
+        // ──> 2. FILTRO DE-DUPLICACIÓN AVANZADO (Laptop vs Celular en mismo Wi-Fi)
+        const registrosUnicos = [];
+        const llavesVistas = new Set();
+
+        datos.forEach(dev => {
+            const id = dev.id !== undefined ? dev.id : dev.session_id;
+            const dispositivo = dev.dispositivo || dev.device_name || 'Terminal Desconocida';
+            const ipOrigen = dev.ipOrigen || dev.ip_origen || '127.0.0.1';
             
-            if (!datos.length) {
-                grid.innerHTML = `<div class="sec-log-empty">✓ No se registran terminales concurrentes.</div>`;
-                tablaHardware.innerHTML = `<tr><td colspan="5" class="sec-text-center">0 terminales mapeadas.</td></tr>`;
-                return;
+            // 💡 SOLUCIÓN DEL ERROR: Combinamos ID + IP + Nombre.
+            // Esto permite que convivan múltiples dispositivos de la misma red local sin pisarse.
+            const llaveDispositivo = `${dispositivo}-${ipOrigen}-${id}`;
+
+            if (!llavesVistas.has(llaveDispositivo)) {
+                llavesVistas.add(llaveDispositivo);
+                registrosUnicos.push({
+                    id,
+                    dispositivo,
+                    usuarioEmail: dev.usuarioEmail || dev.usuario_email || 'Anónimo',
+                    ipOrigen,
+                    lugar: dev.lugar || dev.geo_location || 'Localhost',
+                    tipoDispositivo: dev.tipoDispositivo || dev.device_type || 'DESKTOP',
+                    ultimaConexion: dev.ultimaConexion || dev.last_login || dev.updated_at,
+                    activa: dev.activa === true || dev.activa === 1 || dev.activa === "true"
+                });
             }
+        });
 
-            grid.innerHTML = datos.map(dev => `
-                <div class="crypto-data-node sec-device-card">
-                    <div class="sec-device-card-header">
-                        <strong class="sec-device-name">💻 ${dev.dispositivo}</strong>
-                        <span class="sec-badge-status ${dev.activa ? 'sec-badge-online' : 'sec-badge-offline'}">
-                            ${dev.activa ? 'ONLINE' : 'TERMINATED'}
-                        </span>
-                    </div>
-                    <div class="sec-device-meta">Operador: <span class="sec-text-highlight">${dev.usuarioEmail}</span></div>
-                    <div class="sec-device-footer">
-                        <span class="sec-device-ip">IP: <span class="sec-ip-highlight">${dev.ipOrigen}</span></span>
-                        <span class="sec-device-geo">${dev.lugar || 'Localhost'}</span>
-                    </div>
+        // ──> 3. RENDERIZADO EN GRILLA CIBERPUNK
+        grid.innerHTML = registrosUnicos.map(dev => `
+            <div class="crypto-data-node sec-device-card" style="${dev.dispositivo === 'AGENT_DETECTED_TRAFFIC' ? 'border-left: 3px solid #ffaa00; background: rgba(255,170,0,0.02);' : ''}">
+                <div class="sec-device-card-header">
+                    <strong class="sec-device-name">💻 ${dev.dispositivo}</strong>
+                    <span class="sec-badge-status ${dev.activa ? 'sec-badge-online' : 'sec-badge-offline'}">
+                        ${dev.activa ? 'ONLINE' : 'TERMINATED'}
+                    </span>
                 </div>
-            `).join('');
+                <div class="sec-device-meta">Operador: <span class="sec-text-highlight">${dev.usuarioEmail}</span></div>
+                <div class="sec-device-footer">
+                    <span class="sec-device-ip">IP: <span class="sec-ip-highlight">${dev.ipOrigen}</span></span>
+                    <span class="sec-device-geo">${dev.lugar}</span>
+                </div>
+            </div>
+        `).join('');
 
-            tablaHardware.innerHTML = datos.map(dev => `
-                <tr class="sec-blacklist-row">
-                    <td><strong>${dev.dispositivo}</strong><br><small class="sec-text-muted">IP: ${dev.ipOrigen}</small></td>
-                    <td><span class="sec-badge-role">${dev.tipoDispositivo || 'DESKTOP'}</span></td>
-                    <td>${dev.usuarioEmail}</td>
-                    <td>${dev.ultimaConexion ? new Date(dev.ultimaConexion).toLocaleString() : 'N/A'}</td>
-                    <td class="sec-action-cell" style="text-align: right;">
-                        ${dev.activa ? `
-                            <button onclick="expulsarDispositivo(${dev.id})" class="sec-btn-action sec-btn-danger" style="background:transparent; border:1px solid #ff4444; color:#ff4444; padding:4px 8px; font-family:monospace; cursor:pointer;">
-                                KICK / KILL
-                            </button>
-                        ` : `<span class="sec-text-muted" style="color:#555;">DISCONNECTED</span>`}
-                    </td>
-                </tr>
-            `).join('');
-        } catch (e) { console.error("Error procesando hardware:", e); }
-    }
+        // ──> 4. RENDERIZADO EN TABLA DE FORENSIA
+        tablaHardware.innerHTML = registrosUnicos.map(dev => `
+            <tr class="sec-blacklist-row">
+                <td><strong>${dev.dispositivo}</strong><br><small class="sec-text-muted">IP: ${dev.ipOrigen}</small></td>
+                <td><span class="sec-badge-role">${dev.tipoDispositivo}</span></td>
+                <td>${dev.usuarioEmail}</td>
+                <td>${dev.ultimaConexion ? new Date(dev.ultimaConexion).toLocaleString() : 'N/A'}</td>
+                <td class="sec-action-cell" style="text-align: right;">
+                    ${dev.activa ? `
+                        <button onclick="expulsarDispositivo('${dev.id}')" class="sec-btn-action sec-btn-danger" style="background:transparent; border:1px solid #ff4444; color:#ff4444; padding:4px 8px; font-family:monospace; cursor:pointer;">
+                            ${String(dev.id).includes('siem-virtual') ? 'BAN IP' : 'KICK / KILL'}
+                        </button>
+                    ` : `<span class="sec-text-muted" style="color:#555;">DISCONNECTED</span>`}
+                </td>
+            </tr>
+        `).join('');
+
+    } catch (e) { console.error("Error procesando hardware:", e); }
+}
 
     // ── 4. CARGAR LISTA NEGRA CORTAFUEGOS (CAMELCASE) ───────────────────────────
     async function cargarListaNegra() {

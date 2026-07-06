@@ -124,3 +124,39 @@ function generarFilaSiemLog(log) {
         <td>${log.usuarioEmail || '<span style="color:var(--text-secondary)">Anónimo</span>'}</td>
         <td>${errorCorto}</td>`;
 }
+/**
+ * 🔁 MOTOR DE POLLING ULTRA-VELOZ (1s)
+ * Se auto-pausa si la pestaña pierde foco (ahorra requests) y se reanuda al volver.
+ */
+let _siemIntervalId = null;
+
+function iniciarStreamSiem(token) {
+    if (_siemIntervalId) clearInterval(_siemIntervalId);
+
+    cargarTelemetriaDashboard(token); // primera carga inmediata
+
+    _siemIntervalId = setInterval(() => {
+        cargarTelemetriaDashboard(token);
+    }, 1000); // <-- cadena ultra-veloz: 1s exacto
+}
+
+function detenerStreamSiem() {
+    if (_siemIntervalId) {
+        clearInterval(_siemIntervalId);
+        _siemIntervalId = null;
+    }
+}
+
+document.addEventListener("visibilitychange", () => {
+    const token = localStorage.getItem("token") || sessionStorage.getItem("token");
+    if (document.hidden) {
+        detenerStreamSiem();
+    } else if (token) {
+        iniciarStreamSiem(token);
+    }
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+    const token = localStorage.getItem("token") || sessionStorage.getItem("token");
+    if (token) iniciarStreamSiem(token);
+});

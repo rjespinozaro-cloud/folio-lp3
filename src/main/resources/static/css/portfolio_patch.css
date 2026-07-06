@@ -412,3 +412,33 @@
         height: 30px;
     }
 }
+/* === EFECTO ESCALERA / STREAM MATRIX PARA SIEM === */
+@keyframes siemStreamIn {
+    0% {
+        opacity: 0;
+        transform: translateY(-12px);
+        background-color: rgba(226, 255, 0, 0.15); /* flash del acento al entrar */
+    }
+    60% {
+        opacity: 1;
+        background-color: rgba(226, 255, 0, 0.08);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+        background-color: transparent;
+    }
+}
+
+.siem-row-stream {
+    animation: siemStreamIn 0.5s ease-out;
+}
+
+/* Transición suave para las filas que ya existían y se reacomodan */
+.siem-row-chain {
+    transition: background-color 0.3s ease;
+}
+
+#siem-table-body tr {
+    will-change: transform, opacity;
+}

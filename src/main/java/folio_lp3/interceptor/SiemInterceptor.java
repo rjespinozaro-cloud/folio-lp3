@@ -1,7 +1,7 @@
 package folio_lp3.interceptor;
 
 import folio_lp3.entity.SiemLog;
-import folio_lp3.repository.SiemLogRepository;
+import folio_lp3.service.SiemService;
 import folio_lp3.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class SiemInterceptor implements HandlerInterceptor {
 
-    private final SiemLogRepository siemLogRepository;
+    private final SiemService siemService;
     private final JwtUtil jwtUtil;
     private static final String SIEM_LOG_ATTRIBUTE = "siemLogAttribute";
 
@@ -23,21 +23,29 @@ public class SiemInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         String requestURI = request.getRequestURI();
 
-        // 🛡️ BYPASS SIEM: Evitar que las peticiones del propio Dashboard generen un bucle infinito
-        if (requestURI.contains("/api/v1/admin/siem-logs") || requestURI.contains("/api/v1/admin/network")) {
-            return true; // Pasa de largo, pero no inicializa el SiemLog
+        // 🛡️ BYPASS SIEM: solo /network sigue excluido.
+        if (requestURI.contains("/api/v1/admin/network")) {
+            return true;
         }
 
         String ipAddress = request.getHeader("X-Forwarded-For");
-        if (ipAddress == null) {
+        if (ipAddress == null || ipAddress.isEmpty() || "unknown".equalsIgnoreCase(ipAddress)) {
             ipAddress = request.getRemoteAddr();
+        } else {
+            // 🛡️ CORRECCIÓN CRÍTICA: Si pasan por el mismo router/proxy, tomamos solo la primera IP
+            // Evita que cadenas tipo "192.168.1.10, 10.0.0.1" rompan el ancho de columna en la DB
+            ipAddress = ipAddress.split(",")[0].trim();
         }
 
         SiemLog log = new SiemLog();
         log.setIpOrigen(ipAddress);
         log.setEndpoint(requestURI);
         log.setMetodoHttp(request.getMethod());
-        log.setUserAgent(request.getHeader("User-Agent"));
+        
+        // Truncamos preventivamente el UserAgent a 255 caracteres por seguridad de la DB
+        String ua = request.getHeader("User-Agent");
+        log.setUserAgent(ua != null && ua.length() > 255 ? ua.substring(0, 255) : ua);
+        
         log.setTimestamp(LocalDateTime.now());
 
         request.setAttribute(SIEM_LOG_ATTRIBUTE, log);
@@ -48,19 +56,15 @@ public class SiemInterceptor implements HandlerInterceptor {
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
         String requestURI = request.getRequestURI();
 
-        // 🛡️ BYPASS SIEM: No intentar guardar si la ruta pertenece al monitoreo continuo
-        if (requestURI.contains("/api/v1/admin/siem-logs") || requestURI.contains("/api/v1/admin/network")) {
+        if (requestURI.contains("/api/v1/admin/network")) {
             return;
         }
 
         Object siemLogAttr = request.getAttribute(SIEM_LOG_ATTRIBUTE);
         if (siemLogAttr instanceof SiemLog) {
             SiemLog log = (SiemLog) siemLogAttr;
-
-            // 1. Capturar el estado HTTP
             log.setStatusHttp(response.getStatus());
 
-            // 2. Extraer el email del usuario desde el token JWT
             String authHeader = request.getHeader("Authorization");
             if (authHeader != null && authHeader.startsWith("Bearer ")) {
                 String token = authHeader.substring(7);
@@ -71,18 +75,15 @@ public class SiemInterceptor implements HandlerInterceptor {
                     log.setUsuarioEmail("token_invalido");
                 }
             }
-            
-            // 3. Registrar si hubo una excepción (Estructura única corregida)
+
             Throwable excepcionSpring = (Throwable) request.getAttribute("jakarta.servlet.error.exception");
-            
             if (ex != null) {
                 log.setDetallesError(ex.getClass().getSimpleName() + ": " + ex.getMessage());
             } else if (excepcionSpring != null) {
                 log.setDetallesError(excepcionSpring.getClass().getSimpleName() + ": " + excepcionSpring.getMessage());
             }
 
-            // 4. Guardar el log completo en la base de datos
-            siemLogRepository.save(log);
+            siemService.saveLog(log); // Envío seguro procesado por tu Service
         }
     }
-}   
+}
