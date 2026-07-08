@@ -563,3 +563,8 @@ window.onload = () => {
   }
   draw();
 })();
+
+function scrollNav(direction) {
+    const menu = document.getElementById('sidebarMenu');
+    menu.scrollBy({ left: direction * 200, behavior: 'smooth' });
+}
