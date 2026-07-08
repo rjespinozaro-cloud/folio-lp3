@@ -468,3 +468,53 @@
 .sidebar-menu::-webkit-scrollbar {
     display: none;
 }
+/* === FIX DEFINITIVO: header overlap + tope de ancho === */
+.sidebar-public {
+    overflow-x: hidden;
+    flex-wrap: nowrap;
+    max-width: 100vw;
+    box-sizing: border-box;
+    position: relative;
+    z-index: 2;
+}
+
+.profile-summary {
+    min-width: 0;
+    flex-shrink: 0;
+}
+
+.profile-summary h2 {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 160px;
+    white-space: nowrap;
+}
+
+.sidebar-menu {
+    min-width: 0;
+    flex: 1;
+    overflow-x: auto;
+    justify-content: flex-start !important;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+.sidebar-menu::-webkit-scrollbar {
+    display: none;
+}
+
+/* === Canvas de lluvia de código (fondo global) === */
+#matrix-rain {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.35;
+}
+
+.portfolio-layout {
+    position: relative;
+    z-index: 1;
+    background: transparent !important;
+}
