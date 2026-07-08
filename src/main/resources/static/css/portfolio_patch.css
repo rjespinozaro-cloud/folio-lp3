@@ -518,3 +518,37 @@
     z-index: 1;
     background: transparent !important;
 }
+
+.nav-scroll-btn {
+    flex-shrink: 0;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: rgba(199, 60, 235, 0.08);
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition-standard);
+    z-index: 5;
+}
+.nav-scroll-btn:hover {
+    background: rgba(255, 45, 175, 0.18);
+    color: var(--text-primary);
+    border-color: var(--accent-tech);
+}
+
+/* Fade que avisa que hay mas contenido a los costados */
+.sidebar-menu {
+    position: relative;
+    mask-image: linear-gradient(90deg, transparent 0, black 16px, black calc(100% - 16px), transparent 100%);
+    -webkit-mask-image: linear-gradient(90deg, transparent 0, black 16px, black calc(100% - 16px), transparent 100%);
+}
+
+/* Ocultar las flechas en desktop grande donde todo entra sin scroll */
+@media screen and (min-width: 1440px) {
+    .nav-scroll-btn { display: none; }
+}
