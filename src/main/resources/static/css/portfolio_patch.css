@@ -442,3 +442,29 @@
 #siem-table-body tr {
     will-change: transform, opacity;
 }
+/* === FIX: navbar recortando el menu contra el profile-summary === */
+.sidebar-public {
+    overflow-x: hidden; /* ya no permitimos que todo el navbar se desborde */
+    flex-wrap: nowrap;
+}
+
+.profile-summary {
+    min-width: 0; /* permite que el flex item se achique si hace falta */
+}
+
+.profile-summary h2 {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 160px; /* corta "Ronaldino Espinoza" con "..." si no cabe, en vez de empujar el menu */
+}
+
+.sidebar-menu {
+    min-width: 0;
+    overflow-x: auto;      /* el scroll horizontal vive SOLO aqui, no en todo el navbar */
+    justify-content: flex-start; /* evita que "space-between" separe raro cuando no caben todos */
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+.sidebar-menu::-webkit-scrollbar {
+    display: none;
+}
